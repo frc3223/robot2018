@@ -1,0 +1,9 @@
+pyfrc
+pynetconsole
+pynetworktables
+pytest
+robotpy-hal-base
+robotpy-hal-sim
+robotpy-installer
+robotpy-wpilib-utilities
+wpilib
