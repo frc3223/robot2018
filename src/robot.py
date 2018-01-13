@@ -2,6 +2,8 @@
 
 import wpilib
 from robotpy_ext.common_drivers import navx
+import ctre
+import wpilib.drive
 
 class Gneiss(wpilib.IterativeRobot):
     '''Main robot class'''
@@ -9,12 +11,14 @@ class Gneiss(wpilib.IterativeRobot):
     def robotInit(self):
         '''Robot-wide initialization code should go here'''
         self.joystick = wpilib.Joystick(0)
-        self.motor_rr = wpilib.Victor(2)
-        self.motor_lr = wpilib.Victor(1)
-        self.motors = [self.motor_rr, self.motor_lr]
-        self.drive = wpilib.RobotDrive(self.motor_lr, self.motor_rr)
+        self.motor_rb = ctre.WPI_TalonSRX(2)
+        self.motor_lb = ctre.WPI_TalonSRX(1)
+        self.motor_rf = ctre.WPI_TalonSRX(3)
+        self.motor_lf = ctre.WPI_TalonSRX(4)
+        self.motors = [self.motor_rb, self.motor_lb, self.motor_rf, self.motor_lf]
+        self.drive = wpilib.drive.DifferentialDrive(self.motor_rb, self.motor_lb, self.motor_rf, self.motor_lf)
         self.navx = navx.AHRS.create_spi()
-        self.gyro = wpilib.AnalogGyro(1)
+
         pass
 
     def autonomousInit(self):
