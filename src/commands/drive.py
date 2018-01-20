@@ -1,5 +1,5 @@
 import wpilib.command
-from ..oi import getJoystick
+from oi import getJoystick
 
 class Drive(wpilib.command.Command):
     def __init__(self):
