@@ -34,9 +34,12 @@ class PhysicsEngine(object):
         '''
         
         # Simulate the drivetrain
-        l_motor = hal_data['pwm'][1]['value']
-        r_motor = hal_data['pwm'][2]['value']
+        rb_motor = hal_data['CAN'][1]['value']
+        lb_motor = hal_data['CAN'][13]['value']
+        rf_motor = hal_data['CAN'][17]['value']
+        lf_motor = hal_data['CAN'][15]['value']
         
-        speed, rotation = drivetrains.two_motor_drivetrain(l_motor, r_motor, speed=10)
+        speed, rotation = drivetrains.four_motor_drivetrain(
+                lb_motor, rb_motor, lf_motor, rf_motor, speed=10)
         self.physics_controller.drive(speed, rotation, tm_diff)
 

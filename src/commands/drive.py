@@ -8,7 +8,9 @@ class Drive(wpilib.command.Command):
 
     def execute(self):
         joystick = getJoystick()
-        self.getRobot().drivetrain.drive(joystick)
+        fw = joystick.getRawAxis(1)
+        lr = joystick.getRawAxis(4)
+        self.getRobot().drivetrain.drive.arcadeDrive(fw, lr)
 
     def isFinished(self):
         return False

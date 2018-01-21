@@ -26,32 +26,18 @@ class Gneiss(CommandBasedRobot):
 
         self.joystick = getJoystick()
 
-        self.drivecommand = Drive()
-
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
-        self.drivecommand.cancel()
-
-    def autonomousPeriodic(self):
-        '''Called every 20ms in autonomous mode'''
         pass
 
     def disabledInit(self):
         '''Called only at the beginning of disabled mode'''
-        self.drivecommand.cancel()
-    def disabledPeriodic(self):
-        '''Called every 20ms in disabled mode'''
         pass
 
     def teleopInit(self):
         '''Called only at the beginning of teleoperated mode'''
-        # self.drivecommand.start()
         pass
 
-    def teleopPeriodic(self):
-        '''Called every 20ms in teleoperated mode'''
-        self.drivetrain.stuffs()
-        
 
 if __name__ == '__main__':
     wpilib.run(Gneiss)
