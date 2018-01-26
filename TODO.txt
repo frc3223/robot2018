@@ -1,0 +1,20 @@
+Test Harness
+Interpret game message
+Cross line auto
+Goto switch auto
+goto scale auto
+
+
+
+
+
+
+
+
+Not yet built constraints:
+Place on scale
+Place on switch
+Climb arm
+Speed update
+Testing tests for realsies
+
