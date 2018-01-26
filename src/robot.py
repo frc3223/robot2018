@@ -10,7 +10,7 @@ from oi import getJoystick
 from subsystems import (Drivetrain, Elevator, Intake)
 from wpilib.command import Command
 from commands.drive import Drive
-
+import networktables
 
 class Gneiss(CommandBasedRobot):
     '''Main robot class'''
@@ -23,7 +23,7 @@ class Gneiss(CommandBasedRobot):
         self.drivetrain = Drivetrain()
         self.elevator = Elevator()
         self.intake = Intake()
-
+        self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
 
     def autonomousInit(self):
@@ -38,6 +38,21 @@ class Gneiss(CommandBasedRobot):
         '''Called only at the beginning of teleoperated mode'''
         pass
 
+    def teleopPeriodic(self):
+        super().teleopPeriodic()
+        for i in range(1,11):
+            button = self.joystick.getRawButton(i)
+            self.table.putBoolean("button"+str(i), button)
+
+        for i in range(0,7):
+            axis = self.joystick.getRawAxis(i)
+            self.table.putNumber("Axis"+str(i),axis)
+
+        #joystick = wpilib.Joystick(8)
+        #joystick.getPOV()
+        for i in range(1):
+            pov = self.joystick.getPOV(0)
+            self.table.putNumber("POV"+str(i),pov)
 
 if __name__ == '__main__':
     wpilib.run(Gneiss)
