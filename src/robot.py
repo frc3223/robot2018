@@ -5,6 +5,8 @@ from robotpy_ext.common_drivers import navx
 import ctre
 import wpilib.drive
 from commandbased import CommandBasedRobot
+from commands import turntoangle
+from wpilib.buttons.joystickbutton import JoystickButton
 
 from oi import getJoystick
 from subsystems import (Drivetrain, Elevator, Intake)
@@ -25,6 +27,7 @@ class Gneiss(CommandBasedRobot):
         self.intake = Intake()
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
+        self.angle = turntoangle.Turntoangle(90)
 
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
@@ -36,7 +39,12 @@ class Gneiss(CommandBasedRobot):
 
     def teleopInit(self):
         '''Called only at the beginning of teleoperated mode'''
-        pass
+
+
+        b = JoystickButton(self.joystick, 1)
+        b2 = JoystickButton(self.joystick, 2)
+        b.whenPressed(self.angle)
+        b2.cancelWhenPressed(self.angle)
 
     def teleopPeriodic(self):
         super().teleopPeriodic()
