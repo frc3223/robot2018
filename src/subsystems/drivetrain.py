@@ -36,15 +36,15 @@ class Drivetrain(Subsystem):
         self.navx_table.putNumber('Angle', turntoangle)
 
 
-        sensorPL = self.drivetrain.motor_lb.getSelectedSensorPosition(0)
+        sensorPL = self.motor_lb.getSelectedSensorPosition(0)
         self.leftEncoder_table.putNumber("Position",sensorPL)
 
-        sensorPR = self.drivetrain.motor_rb.getSelectedSensorPosition(0)
-        self.rightEncoder_table.putNumber("Position", sensorPR)
+        sensorPR = self.motor_rb.getSelectedSensorPosition(0)
+        self.rightEncoder_table.putNumber("Position",sensorPR)
 
-        sensorVL = self.drivetrain.motor_lb.getSelectedSensorVelocity(0)
-        self.leftEncoder_table.putNumber("Velocity", sensorVL)
+        sensorVL = self.motor_lb.getSelectedSensorVelocity(0)
+        self.leftEncoder_table.putNumber("Velocity",sensorVL)
 
-        sensorVR = self.drivetrain.motor_rb.getSelectedSensorVelocity(0)
-        self.rightEncoder_table.putNumber("Velocity", sensorVR)
+        sensorVR = self.motor_rb.getSelectedSensorVelocity(0)
+        self.rightEncoder_table.putNumber("Velocity",sensorVR)
 
