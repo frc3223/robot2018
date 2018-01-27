@@ -4,7 +4,7 @@ import wpilib.command
 
 class Turntoangle(wpilib.command.PIDCommand):
     def __init__(self, setpoint):
-        super().__init__(p=0, i=0, d=0, period=.010)
+        super().__init__(p=.1, i=0, d=0, period=.010)
 
         self.requires(self.getRobot().drivetrain)
         pid = self.getPIDController()

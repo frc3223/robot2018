@@ -3,6 +3,7 @@ from wpilib.command.subsystem import Subsystem
 from robotpy_ext.common_drivers import navx
 import ctre
 from commands.drive import Drive
+import networktables
 
 
 class Drivetrain(Subsystem):
@@ -19,6 +20,7 @@ class Drivetrain(Subsystem):
         self.motors = [self.motor_rb, self.motor_lb, self.motor_rf, self.motor_lf]
         self.drive = wpilib.drive.DifferentialDrive(self.motor_rb, self.motor_lb)
         self.navx = navx.AHRS.create_spi()
+        self.navx_table = networktables.NetworkTables.getTable('/Sensor/Navx')
 
     def initDefaultCommand(self):
         self.setDefaultCommand(Drive())
@@ -26,3 +28,7 @@ class Drivetrain(Subsystem):
     def stuffs(self, joystick):
         #self.drive.arcadeDrive(0.4,0)
         self.motor_lf.set(0.4 if joystick.getRawButton(1) else 0)
+
+    def periodic(self):
+        turntoangle = self.navx.getAngle()
+        self.navx_table.putNumber('Angle', turntoangle)
