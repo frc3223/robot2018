@@ -62,6 +62,10 @@ class Gneiss(CommandBasedRobot):
             pov = self.joystick.getPOV(0)
             self.table.putNumber("POV"+str(i),pov)
 
+
+
+
+
 if __name__ == '__main__':
     wpilib.run(Gneiss)
 
