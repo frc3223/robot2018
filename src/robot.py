@@ -54,6 +54,21 @@ class Gneiss(CommandBasedRobot):
             pov = self.joystick.getPOV(0)
             self.table.putNumber("POV"+str(i),pov)
 
+
+        sensorPL = self.drivetrain.motor_lb.getSelectedSensorPosition(0)
+        self.table.putNumber("LeftEncoder Position",sensorPL)
+
+        sensorPR = self.drivetrain.motor_rb.getSelectedSensorPosition(0)
+        self.table.putNumber("RightEncoder Position", sensorPR)
+
+        sensorVL = self.drivetrain.motor_lb.getSelectedSensorVelocity(0)
+        self.table.putNumber("LeftEncoder Velocity", sensorVL)
+
+        sensorVR = self.drivetrain.motor_rb.getSelectedSensorVelocity(0)
+        self.table.putNumber("RightEncoder Velocity", sensorVR)
+
+
+
 if __name__ == '__main__':
     wpilib.run(Gneiss)
 

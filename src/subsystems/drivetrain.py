@@ -19,10 +19,11 @@ class Drivetrain(Subsystem):
         self.motors = [self.motor_rb, self.motor_lb, self.motor_rf, self.motor_lf]
         self.drive = wpilib.drive.DifferentialDrive(self.motor_rb, self.motor_lb)
         self.navx = navx.AHRS.create_spi()
+        self.motor_lb.configSelectedFeedbackSensor(ctre._impl.FeedbackDevice.QuadEncoder,0,0)
+        self.motor_rb.configSelectedFeedbackSensor(ctre._impl.FeedbackDevice.QuadEncoder, 0, 0)
 
     def initDefaultCommand(self):
         self.setDefaultCommand(Drive())
 
-    def stuffs(self, joystick):
-        #self.drive.arcadeDrive(0.4,0)
-        self.motor_lf.set(0.4 if joystick.getRawButton(1) else 0)
+
+
