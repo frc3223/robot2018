@@ -7,6 +7,8 @@ import networktables
 
 
 class Drivetrain(Subsystem):
+    '''encoder/ft ratio'''
+    ratio = 886.27
 
     def __init__(self):
         super().__init__('Drivetrain')
@@ -27,8 +29,25 @@ class Drivetrain(Subsystem):
         self.leftEncoder_table = networktables.NetworkTables.getTable("/Encoder/Left")
         self.rightEncoder_table = networktables.NetworkTables.getTable("/Encoder/Right")
 
+        self.motor_lb.setSensorPhase(True)
+        self.motor_rb.setSensorPhase(True)
+
+
+    def zeroEncoders(self):
+        self.motor_rb.setSelectedSensorPosition(0, 0, 0)
+        self.motor_lb.setSelectedSensorPosition(0, 0, 0)
+
+
+
     def initDefaultCommand(self):
         self.setDefaultCommand(Drive())
+
+
+    def getEncoderVelocity(self, fps):
+        return fps*self.ratio/10
+
+    def getEncoderAccel(self, fps2):
+        return fps2*self.ratio/10
 
 
     def periodic(self):
@@ -37,14 +56,14 @@ class Drivetrain(Subsystem):
 
 
         sensorPL = self.motor_lb.getSelectedSensorPosition(0)
-        self.leftEncoder_table.putNumber("Position",sensorPL)
+        self.leftEncoder_table.putNumber("Position", sensorPL)
 
         sensorPR = self.motor_rb.getSelectedSensorPosition(0)
-        self.rightEncoder_table.putNumber("Position",sensorPR)
+        self.rightEncoder_table.putNumber("Position", sensorPR)
 
         sensorVL = self.motor_lb.getSelectedSensorVelocity(0)
-        self.leftEncoder_table.putNumber("Velocity",sensorVL)
+        self.leftEncoder_table.putNumber("Velocity", sensorVL)
 
         sensorVR = self.motor_rb.getSelectedSensorVelocity(0)
-        self.rightEncoder_table.putNumber("Velocity",sensorVR)
+        self.rightEncoder_table.putNumber("Velocity", sensorVR)
 
