@@ -13,6 +13,7 @@ from subsystems import (Drivetrain, Elevator, Intake)
 from wpilib.command import Command
 from commands.drive import Drive
 import networktables
+from commands import driveForward
 
 class Gneiss(CommandBasedRobot):
     '''Main robot class'''
@@ -28,6 +29,7 @@ class Gneiss(CommandBasedRobot):
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
         self.angle = turntoangle.Turntoangle(90)
+        self.DriveForward = driveForward.DriveForward()
 
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
@@ -41,10 +43,15 @@ class Gneiss(CommandBasedRobot):
         '''Called only at the beginning of teleoperated mode'''
 
 
-        b = JoystickButton(self.joystick, 1)
-        b2 = JoystickButton(self.joystick, 2)
-        b.whenPressed(self.angle)
-        b2.cancelWhenPressed(self.angle)
+        #b = JoystickButton(self.joystick, 1)
+        #b2 = JoystickButton(self.joystick, 2)
+        #b.whenPressed(self.angle)
+        #b2.cancelWhenPressed(self.angle)
+
+        b3 = JoystickButton(self.joystick, 3)
+        b4 = JoystickButton(self.joystick, 4)
+        b3.whenPressed(self.DriveForward)
+        b4.cancelWhenPressed(self.DriveForward)
 
     def teleopPeriodic(self):
         super().teleopPeriodic()
