@@ -4,13 +4,15 @@ from oi import getJoystick
 class Drive(wpilib.command.Command):
     def __init__(self):
         super().__init__('Drive')
-        self.requires(self.getRobot().drivetrain)
+        self.drivetrain = self.getRobot().drivetrain
+        self.requires(self.drivetrain)
 
     def execute(self):
+        self.drivetrain.mode = "Drive"
         joystick = getJoystick()
         fw = joystick.getRawAxis(1)
         lr = joystick.getRawAxis(4)
-        self.getRobot().drivetrain.drive.arcadeDrive(fw, lr)
+        self.drivetrain.drive.arcadeDrive(fw, lr)
 
     def isFinished(self):
         return False

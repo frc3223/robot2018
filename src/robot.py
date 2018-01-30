@@ -41,12 +41,11 @@ class Gneiss(CommandBasedRobot):
 
     def teleopInit(self):
         '''Called only at the beginning of teleoperated mode'''
-
-
-        #b = JoystickButton(self.joystick, 1)
-        #b2 = JoystickButton(self.joystick, 2)
-        #b.whenPressed(self.angle)
-        #b2.cancelWhenPressed(self.angle)
+        self.drivetrain.init_logger()
+        b = JoystickButton(self.joystick, 1)
+        b2 = JoystickButton(self.joystick, 2)
+        b.whenPressed(self.angle)
+        b2.cancelWhenPressed(self.angle)
 
         b3 = JoystickButton(self.joystick, 3)
         b4 = JoystickButton(self.joystick, 4)
@@ -68,9 +67,6 @@ class Gneiss(CommandBasedRobot):
         for i in range(1):
             pov = self.joystick.getPOV(0)
             self.table.putNumber("POV"+str(i),pov)
-
-
-
 
 
 if __name__ == '__main__':

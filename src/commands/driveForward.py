@@ -15,10 +15,6 @@ class DriveForward(wpilib.command.Command):
         self.getRobot().drivetrain.motor_rb.configMotionCruiseVelocity(self.getRobot.drivetrain.getEncoderVelocity(1), 0)
         self.getRobot().drivetrain.motor_lb.configMotionCruiseVelocity(self.getRobot.drivetrain.getEncoderVelocity(1), 0)
 
-
-
-
-
     def execute(self):
         self.getRobot().drivetrain.drive.arcadeDrive(-0.4,0)
 

@@ -1,4 +1,5 @@
 import wpilib
+import csv
 from wpilib.command.subsystem import Subsystem
 from robotpy_ext.common_drivers import navx
 import ctre
@@ -7,7 +8,9 @@ import networktables
 
 
 class Drivetrain(Subsystem):
-    '''encoder/ft ratio'''
+    ''''''
+
+    #: encoder/ft ratio
     ratio = 886.27
 
     def __init__(self):
@@ -21,7 +24,7 @@ class Drivetrain(Subsystem):
         self.motor_lf.follow(self.motor_lb)
         self.motors = [self.motor_rb, self.motor_lb, self.motor_rf, self.motor_lf]
         self.drive = wpilib.drive.DifferentialDrive(self.motor_rb, self.motor_lb)
-        self.navx = navx.AHRS.create_spi()
+        self.navx = navx.AHRS.create_spi(update_rate_hz=150)
 
         self.motor_lb.configSelectedFeedbackSensor(ctre._impl.FeedbackDevice.QuadEncoder,0,0)
         self.motor_rb.configSelectedFeedbackSensor(ctre._impl.FeedbackDevice.QuadEncoder, 0, 0)
@@ -32,16 +35,25 @@ class Drivetrain(Subsystem):
         self.motor_lb.setSensorPhase(True)
         self.motor_rb.setSensorPhase(True)
 
+        self.timer = wpilib.Timer()
+        self.timer.start()
+        self.mode = ""
 
-    def zeroEncoders(self):
-        self.motor_rb.setSelectedSensorPosition(0, 0, 0)
-        self.motor_lb.setSelectedSensorPosition(0, 0, 0)
-
-
+        self.logger = None
 
     def initDefaultCommand(self):
         self.setDefaultCommand(Drive())
 
+    def init_logger(self):
+        filepath = '/home/lvuser/drivetrain.csv'
+        if wpilib.RobotBase.isSimulation():
+            filepath = './drivetrain.csv'
+        self.logger = csv.writer(open(filepath, 'w'))
+        self.logger.writerow(["time", "heading", "enc_pos_l", "enc_pos_r", "enc_vel_l", "enc_vel_r", "voltage_l", "voltage_r", "mode"])
+
+    def zeroEncoders(self):
+        self.motor_rb.setSelectedSensorPosition(0, 0, 0)
+        self.motor_lb.setSelectedSensorPosition(0, 0, 0)
 
     def getEncoderVelocity(self, fps):
         return fps*self.ratio/10
@@ -51,8 +63,9 @@ class Drivetrain(Subsystem):
 
 
     def periodic(self):
-        turntoangle = self.navx.getAngle()
-        self.navx_table.putNumber('Angle', turntoangle)
+        t = self.timer.get()
+        angle = self.navx.getYaw()
+        self.navx_table.putNumber('Angle', angle)
 
 
         sensorPL = self.motor_lb.getSelectedSensorPosition(0)
@@ -66,4 +79,10 @@ class Drivetrain(Subsystem):
 
         sensorVR = self.motor_rb.getSelectedSensorVelocity(0)
         self.rightEncoder_table.putNumber("Velocity", sensorVR)
+
+        voltageL = self.motor_lb.get()
+        voltageR = self.motor_rb.get()
+
+        if self.logger is not None:
+            self.logger.writerow([t, angle, sensorPL, sensorPR, sensorVL, sensorVR, voltageL, voltageR, self.mode])
 
