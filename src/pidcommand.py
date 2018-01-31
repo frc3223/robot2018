@@ -8,7 +8,7 @@
 
 from wpilib.command import Command
 
-from .pidcontroller import PIDController
+from pidcontroller import PIDController
 
 __all__ = ["PIDCommand"]
 

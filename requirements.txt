@@ -7,3 +7,5 @@ robotpy-hal-sim
 robotpy-installer
 robotpy-wpilib-utilities
 wpilib
+robotpy-ctre
+

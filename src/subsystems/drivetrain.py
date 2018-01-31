@@ -39,10 +39,11 @@ class Drivetrain(Subsystem):
         self.timer.start()
         self.mode = ""
 
+
         self.logger = None
 
     def initDefaultCommand(self):
-        self.setDefaultCommand(Drive())
+        self.setDefaultCommand(Drive(self))
 
     def init_logger(self):
         filepath = '/home/lvuser/drivetrain.csv'
