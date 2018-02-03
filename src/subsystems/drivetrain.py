@@ -83,9 +83,9 @@ class Drivetrain(Subsystem):
         self.motor_rb.config_kD(0, 2, 0)
         self.motor_lb.config_kD(0, 2, 0)
 
-    def execute_driveforward(self):
-        self.motor_rb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * -25)
-        self.motor_lb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * 25)
+    def execute_driveforward(self, positionL, positionR):
+        self.motor_rb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * positionR)
+        self.motor_lb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * positionL)
         self.drive.feed()
 
     def isFinished_driveforward(self):

@@ -14,6 +14,7 @@ from wpilib.command import Command
 from commands.drive import Drive
 import networktables
 from commands import driveForward
+from commands import turnlikeistusday
 
 class Gneiss(CommandBasedRobot):
     '''Main robot class'''
@@ -28,7 +29,7 @@ class Gneiss(CommandBasedRobot):
         self.intake = Intake()
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
-        self.angle = turntoangle.Turntoangle(90)
+        self.angle = turnlikeistusday.Turnlikeistusday(90)
         self.DriveForward = driveForward.DriveForward()
 
     def autonomousInit(self):

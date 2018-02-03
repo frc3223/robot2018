@@ -2,31 +2,25 @@ import wpilib.command
 import ctre
 
 
-class DriveForward(wpilib.command.Command):
+class Turnlikeistusday(wpilib.command.Command):
     ratio = 888
 
     def __init__(self):
-        super().__init__("DriveForward")
+        super().__init__("Turnlikeistusday")
         self.requires(self.getRobot().drivetrain)
         self.drivetrain = self.getRobot().drivetrain
         #self.drivetrain.motor_lb.setInverted(True)
 
     def initialize(self):
-       self.drivetrain.initilize_driveForward()
-
+        self.drivetrain.initilize_driveForward()
 
     def execute(self):
-        Position = 25
-        self.drivetrain.execute_driveforward(Position, -Position)
-
-
+        self.drivetrain.execute_driveforward()
+        
+        
 
     def isFinished(self):
         self.drivetrain.isFinished_driveforward()
-
+    
     def end(self):
         self.drivetrain.end_driveforward()
-
-
-
-
