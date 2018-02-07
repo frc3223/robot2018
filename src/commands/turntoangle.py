@@ -28,7 +28,7 @@ class Turntoangle(PIDCommand):
 
         self.drivetrain.motor_rb.configClosedLoopRamp(2, 0)
         self.drivetrain.motor_lb.configClosedLoopRamp(2, 0)
-
+        #Items used for the simulation/the dashboard
         filepath = '/home/lvuser/turn.csv'
         if wpilib.RobotBase.isSimulation():
             filepath = './turn.csv'
@@ -40,6 +40,7 @@ class Turntoangle(PIDCommand):
 
 
     def usePIDOutput(self, output):
+        #Variables used by the PID and the currents for the motor controllers (Talons)
         t = self.timer.get()
         b = self.joystick.getRawButton(5)
         l = self.drivetrain.motor_lb.get()

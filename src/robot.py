@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+#Imports for the code that adds the needed libraries
 import wpilib
 from robotpy_ext.common_drivers import navx
 import ctre
@@ -14,7 +14,7 @@ from wpilib.command import Command
 from commands.drive import Drive
 import networktables
 from commands import driveForward
-from commands import turnlikeistusday
+from commands import turnlikeistuesday
 
 class Gneiss(CommandBasedRobot):
     '''Main robot class'''
@@ -23,13 +23,13 @@ class Gneiss(CommandBasedRobot):
         '''Robot-wide initialization code should go here'''
 
         Command.getRobot = lambda x=0: self
-
+        #Variables that are used by the code
         self.drivetrain = Drivetrain()
         self.elevator = Elevator()
         self.intake = Intake()
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
-        self.angle = turnlikeistusday.Turnlikeistusday(90)
+        self.angle = turnlikeistuesday.Turnlikeistuesday(1.64)
         self.DriveForward = driveForward.DriveForward()
 
     def autonomousInit(self):
@@ -42,14 +42,15 @@ class Gneiss(CommandBasedRobot):
 
     def teleopInit(self):
         '''Called only at the beginning of teleoperated mode'''
+        #How the buttons for the xbox controller are mapped
         self.drivetrain.init_logger()
-        b = JoystickButton(self.joystick, 1)
-        b2 = JoystickButton(self.joystick, 2)
+        b = JoystickButton(self.joystick, 1) #A
+        b2 = JoystickButton(self.joystick, 2) #B
         b.whenPressed(self.angle)
         b2.cancelWhenPressed(self.angle)
 
-        b3 = JoystickButton(self.joystick, 3)
-        b4 = JoystickButton(self.joystick, 4)
+        b3 = JoystickButton(self.joystick, 3) #X
+        b4 = JoystickButton(self.joystick, 4) #Y
         b3.whenPressed(self.DriveForward)
         b4.cancelWhenPressed(self.DriveForward)
 

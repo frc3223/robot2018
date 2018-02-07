@@ -1,4 +1,5 @@
 import wpilib
+import wpilib.drive
 import csv
 from wpilib.command.subsystem import Subsystem
 from robotpy_ext.common_drivers import navx
@@ -15,7 +16,7 @@ class Drivetrain(Subsystem):
 
     def __init__(self):
         super().__init__('Drivetrain')
-
+        #The set motor controllers for this years robot and how motors are coded
         self.motor_rb = ctre.WPI_TalonSRX(1)
         self.motor_rf = ctre.WPI_VictorSPX(17)
         self.motor_lb = ctre.WPI_TalonSRX(13)
@@ -24,7 +25,7 @@ class Drivetrain(Subsystem):
         self.motor_lf.follow(self.motor_lb)
         self.motors = [self.motor_rb, self.motor_lb, self.motor_rf, self.motor_lf]
         self.drive = wpilib.drive.DifferentialDrive(self.motor_rb, self.motor_lb)
-        self.navx = navx.AHRS.create_spi(update_rate_hz=150)
+        self.navx = navx.AHRS.create_spi()
 
         self.motor_lb.configSelectedFeedbackSensor(ctre._impl.FeedbackDevice.QuadEncoder,0,0)
         self.motor_rb.configSelectedFeedbackSensor(ctre._impl.FeedbackDevice.QuadEncoder, 0, 0)
@@ -33,7 +34,6 @@ class Drivetrain(Subsystem):
         self.rightEncoder_table = networktables.NetworkTables.getTable("/Encoder/Right")
         self.leftError = networktables.NetworkTables.getTable("/TalonL/Error")
         self.rightError = networktables.NetworkTables.getTable("/TalonR/Error")
-
         self.motor_lb.setSensorPhase(True)
         self.motor_rb.setSensorPhase(True)
 
@@ -43,6 +43,12 @@ class Drivetrain(Subsystem):
 
 
         self.logger = None
+
+    def execute_turn(self, angle):
+        position = angle * 55
+        self.motor_rb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * position)
+        self.motor_lb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * position)
+        self.drive.feed()
 
     def initDefaultCommand(self):
         self.setDefaultCommand(Drive())
@@ -59,6 +65,7 @@ class Drivetrain(Subsystem):
         self.motor_lb.setSelectedSensorPosition(0, 0, 0)
 
     def initilize_driveForward(self):
+        #The PID values with the motors
         self.zeroEncoders()
         self.motor_rb.configMotionAcceleration(int(self.getEncoderAccel(5)), 0)
         self.motor_lb.configMotionAcceleration(int(self.getEncoderAccel(5)), 0)
@@ -107,11 +114,13 @@ class Drivetrain(Subsystem):
 
 
     def periodic(self):
+        #Variables for the Navx
         t = self.timer.get()
-        angle = self.navx.getYaw()
+        angle = self.navx.getAngle()
+        self.navx.reset()
         self.navx_table.putNumber('Angle', angle)
 
-
+        #Variables used for the dashboard
         sensorPL = self.motor_lb.getSelectedSensorPosition(0)
         self.leftEncoder_table.putNumber("Position", sensorPL)
 
