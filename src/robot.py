@@ -21,7 +21,7 @@ from wpilib.command import scheduler
 
 class Gneiss(CommandBasedRobot):
     '''Main robot class'''
-    
+
     def robotInit(self):
         '''Robot-wide initialization code should go here'''
 
@@ -45,6 +45,7 @@ class Gneiss(CommandBasedRobot):
 
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
+        self.elevator.setSolenoidState(true) #assumes true is open
         pass
 
     def disabledInit(self):
