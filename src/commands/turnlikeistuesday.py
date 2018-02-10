@@ -16,7 +16,7 @@ class Turnlikeistuesday(wpilib.command.Command):
         self.drivetrain.initilize_driveForward()
 
     def execute(self):
-        self.drivetrain.execute_turn(self.position, self.position, )
+        self.drivetrain.execute_turn(self.position)
         
         
 

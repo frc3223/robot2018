@@ -7,6 +7,7 @@ import wpilib.drive
 from commandbased import CommandBasedRobot
 from commands import turntoangle
 from wpilib.buttons.joystickbutton import JoystickButton
+from wpilib.buttons.trigger import Trigger
 
 from oi import getJoystick
 from subsystems import (Drivetrain, Elevator, Intake)
@@ -15,6 +16,8 @@ from commands.drive import Drive
 import networktables
 from commands import driveForward
 from commands import turnlikeistuesday
+import commands
+from wpilib.command import scheduler
 
 class Gneiss(CommandBasedRobot):
     '''Main robot class'''
@@ -31,6 +34,14 @@ class Gneiss(CommandBasedRobot):
         self.joystick = getJoystick()
         self.angle = turnlikeistuesday.Turnlikeistuesday(1.64)
         self.DriveForward = driveForward.DriveForward()
+        self.goToPickup = commands.elevatorPickupHeight()
+        self.goToScale = commands.elevatorScaleHeight()
+        self.goToSwitch = commands.elevatorSwitchHeight()
+        self.goDown = commands.elevatorDownHeight()
+        self.pullIn = commands.grabberPullIn()
+        self.spitOut = commands.grabberSpitOut()
+
+
 
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
@@ -54,6 +65,24 @@ class Gneiss(CommandBasedRobot):
         b3.whenPressed(self.DriveForward)
         b4.cancelWhenPressed(self.DriveForward)
 
+        '''
+        pickupheight_button = JoystickButton(self.joystick, 1) #A
+        pickupheight_button.whenPressed(self.goToPickup)
+        switchheight_button = JoystickButton(self.joystick, 2)#B
+        switchheight_button.whenPressed(self.goToSwitch)
+        elevatordown_button = JoystickButton(self.joystick, 3) #X
+        elevatordown_button.whenPressed(self.goDown)
+        scaleheight_button = JoystickButton(self.joystick, 4) #Y
+        scaleheight_button.whenPressed(self.goToScale)
+        spitout_button = JoystickButton(self.joystick, 6) #Right Bumper
+        spitout_button.whenPressed(self.spitOut)
+        pullin_button = JoystickButton(self.joystick, 5) #Left Bumper
+        pullin_button.whenPressed(self.pullIn)
+        '''
+
+
+
+
     def teleopPeriodic(self):
         super().teleopPeriodic()
         for i in range(1,11):
@@ -69,6 +98,7 @@ class Gneiss(CommandBasedRobot):
         for i in range(1):
             pov = self.joystick.getPOV(0)
             self.table.putNumber("POV"+str(i),pov)
+
 
 
 if __name__ == '__main__':
