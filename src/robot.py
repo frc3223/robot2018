@@ -29,7 +29,7 @@ class Gneiss(CommandBasedRobot):
         self.intake = Intake()
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
-        self.angle = turnlikeistuesday.Turnlikeistuesday(1.64)
+        self.angle = turnlikeistuesday.Turnlikeistuesday(90)
         self.DriveForward = driveForward.DriveForward()
 
     def autonomousInit(self):
@@ -54,23 +54,6 @@ class Gneiss(CommandBasedRobot):
         b3.whenPressed(self.DriveForward)
         b4.cancelWhenPressed(self.DriveForward)
 
-    def teleopPeriodic(self):
-        super().teleopPeriodic()
-        for i in range(1,11):
-            button = self.joystick.getRawButton(i)
-            self.table.putBoolean("button"+str(i), button)
-
-        for i in range(0,7):
-            axis = self.joystick.getRawAxis(i)
-            self.table.putNumber("Axis"+str(i),axis)
-
-        #joystick = wpilib.Joystick(8)
-        #joystick.getPOV()
-        for i in range(1):
-            pov = self.joystick.getPOV(0)
-            self.table.putNumber("POV"+str(i),pov)
-
 
 if __name__ == '__main__':
     wpilib.run(Gneiss)
-
