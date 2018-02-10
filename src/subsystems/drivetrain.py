@@ -27,8 +27,10 @@ class Drivetrain(Subsystem):
         self.drive = wpilib.drive.DifferentialDrive(self.motor_rb, self.motor_lb)
         self.navx = navx.AHRS.create_spi()
 
-        self.motor_lb.configSelectedFeedbackSensor(ctre._impl.FeedbackDevice.QuadEncoder,0,0)
-        self.motor_rb.configSelectedFeedbackSensor(ctre._impl.FeedbackDevice.QuadEncoder, 0, 0)
+        self.motor_lb.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder,0,0)
+        self.motor_rb.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder, 0, 0)
+        self.motor_rb.selectProfileSlot(0, 0)
+        self.motor_lb.selectProfileSlot(0, 0)
         self.navx_table = networktables.NetworkTables.getTable('/Sensor/Navx')
         self.leftEncoder_table = networktables.NetworkTables.getTable("/Encoder/Left")
         self.rightEncoder_table = networktables.NetworkTables.getTable("/Encoder/Right")
@@ -45,7 +47,7 @@ class Drivetrain(Subsystem):
         self.logger = None
 
     def execute_turn(self, angle):
-        position = angle * 55
+        position = angle / 55.
         self.motor_rb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * position)
         self.motor_lb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * position)
         self.drive.feed()
@@ -136,8 +138,8 @@ class Drivetrain(Subsystem):
         voltageL = self.motor_lb.get()
         voltageR = self.motor_rb.get()
 
-        errorL = self.motor_lb.getClosedLoopError(0)
-        errorR = self.motor_rb.getClosedLoopError(0)
+        errorL = 0 #self.motor_lb.getClosedLoopError(0)
+        errorR = 0 #self.motor_rb.getClosedLoopError(0)
 
         targetR = self.motor_rb.getClosedLoopTarget(0)
         targetL = self.motor_lb.getClosedLoopTarget(0)
@@ -145,8 +147,8 @@ class Drivetrain(Subsystem):
         voltageL2 = self.motor_lb.getBusVoltage()
         voltageR2 = self.motor_rb.getBusVoltage()
 
-        iErrorL = self.motor_lb.getIntegralAccumulator(0)
-        iErrorR = self.motor_rb.getIntegralAccumulator(0)
+        iErrorL = 0 #self.motor_lb.getIntegralAccumulator(0)
+        iErrorR = 0 #self.motor_rb.getIntegralAccumulator(0)
 
         self.leftError.putNumber("Value", errorL)
         self.rightError.putNumber("Value", errorR)

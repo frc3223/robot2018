@@ -34,13 +34,14 @@ class Gneiss(CommandBasedRobot):
         self.joystick = getJoystick()
         self.angle = turnlikeistuesday.Turnlikeistuesday(90)
         self.DriveForward = driveForward.DriveForward()
+        '''
         self.goToPickup = commands.elevatorPickupHeight()
         self.goToScale = commands.elevatorScaleHeight()
         self.goToSwitch = commands.elevatorSwitchHeight()
         self.goDown = commands.elevatorDownHeight()
         self.pullIn = commands.grabberPullIn()
         self.spitOut = commands.grabberSpitOut()
-
+        '''
 
 
     def autonomousInit(self):
