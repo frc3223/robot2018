@@ -66,6 +66,9 @@ class Drivetrain(Subsystem):
         self.motor_rb.setSelectedSensorPosition(0, 0, 0)
         self.motor_lb.setSelectedSensorPosition(0, 0, 0)
 
+    def zeroNavx(self):
+        self.navx.reset()
+
     def initilize_driveForward(self):
         #The PID values with the motors
         self.zeroEncoders()
@@ -92,6 +95,32 @@ class Drivetrain(Subsystem):
         self.motor_rb.config_kD(0, 2, 0)
         self.motor_lb.config_kD(0, 2, 0)
 
+    def initialize_velocity_closedloop(self):
+        self.motor_rb.configNominalOutputForward(0, 0)
+        self.motor_lb.configNominalOutputForward(0, 0)
+        self.motor_rb.configNominalOutputReverse(0, 0)
+        self.motor_lb.configNominalOutputReverse(0, 0)
+        self.motor_rb.configPeakOutputForward(1, 0)
+        self.motor_lb.configPeakOutputForward(1, 0)
+        self.motor_rb.configPeakOutputReverse(-1, 0)
+        self.motor_lb.configPeakOutputReverse(-1, 0)
+        self.motor_rb.selectProfileSlot(0, 0)
+        self.motor_lb.selectProfileSlot(0, 0)
+        self.motor_rb.config_kF(0, 0, 0)
+        self.motor_lb.config_kF(0, 0, 0)
+        self.motor_rb.config_kP(0, 0.18, 0)
+        self.motor_lb.config_kP(0, 0.18, 0)
+        self.motor_rb.config_kI(0, 0, 0)
+        self.motor_lb.config_kI(0, 0, 0)
+        self.motor_rb.config_kD(0, 0, 0)
+        self.motor_lb.config_kD(0, 0, 0)
+
+    def set_turn_velocity(self, v_degps):
+        velocity_ratio = 1.6
+        v_encp100ms = velocity_ratio * v_degps
+        self.motor_rb.set(ctre.ControlMode.Velocity, v_encp100ms)
+        self.motor_lb.set(ctre.ControlMode.Velocity, v_encp100ms)
+
     def execute_driveforward(self, positionL, positionR):
         self.motor_rb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * positionR)
         self.motor_lb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * positionL)
@@ -106,7 +135,8 @@ class Drivetrain(Subsystem):
     def end_driveforward(self):
         self.motor_rb.set(0)
         self.motor_lb.set(0)
-        # doesn't compensate for deceleration
+
+    off = end_driveforward
 
     def getEncoderVelocity(self, fps):
         return fps*self.ratio/10
