@@ -42,6 +42,7 @@ class Drivetrain(Subsystem):
         self.timer = wpilib.Timer()
         self.timer.start()
         self.mode = ""
+        self.computed_velocity = 0
 
 
         self.logger = None
@@ -63,7 +64,10 @@ class Drivetrain(Subsystem):
         if wpilib.RobotBase.isSimulation():
             filepath = './drivetrain.csv'
         self.logger = csv.writer(open(filepath, 'w'))
-        self.logger.writerow(["time", "heading", "enc_pos_l", "enc_pos_r", "enc_vel_l", "enc_vel_r", "voltage_l", "voltage_r", "mode"])
+        self.logger.writerow(["time", "heading", "enc_pos_l", "enc_pos_r", "enc_vel_l", "enc_vel_r",
+                              "voltage_l", "voltage_r",
+                              "target_l", "target_r", "error_l", "error_r",
+                              "computed_velocity", "mode"])
 
     def zeroEncoders(self):
         self.motor_rb.setSelectedSensorPosition(0, 0, 0)
@@ -146,18 +150,21 @@ class Drivetrain(Subsystem):
         self.motor_lb.configPeakOutputReverse(-1, 0)
         self.motor_rb.selectProfileSlot(0, 0)
         self.motor_lb.selectProfileSlot(0, 0)
-        self.motor_rb.config_kF(0, 0, 0)
-        self.motor_lb.config_kF(0, 0, 0)
-        self.motor_rb.config_kP(0, 0.18, 0)
-        self.motor_lb.config_kP(0, 0.18, 0)
-        self.motor_rb.config_kI(0, 0, 0)
-        self.motor_lb.config_kI(0, 0, 0)
-        self.motor_rb.config_kD(0, 0, 0)
-        self.motor_lb.config_kD(0, 0, 0)
+
+        self.motor_rb.config_kF(0, 0.88, 0)
+        self.motor_rb.config_kP(0, 3.18, 0)
+        self.motor_rb.config_kI(0, 0.01, 0)
+        self.motor_rb.config_kD(0, 450, 0)
+
+        self.motor_lb.config_kF(0, 0.88, 0)
+        self.motor_lb.config_kP(0, 3.18, 0)
+        self.motor_lb.config_kI(0, 0.01, 0)
+        self.motor_lb.config_kD(0, 450, 0)
 
     def set_turn_velocity(self, v_degps):
         velocity_ratio = 1.6
-        v_encp100ms = velocity_ratio * v_degps
+        #self.computed_velocity = v_encp100ms = velocity_ratio * v_degps
+        self.computed_velocity = v_encp100ms = 200
         self.motor_rb.set(ctre.ControlMode.Velocity, v_encp100ms)
         self.motor_lb.set(ctre.ControlMode.Velocity, v_encp100ms)
 
@@ -207,8 +214,8 @@ class Drivetrain(Subsystem):
         voltageL = self.motor_lb.getMotorOutputPercent()
         voltageR = self.motor_rb.getMotorOutputPercent()
 
-        errorL = 0 #self.motor_lb.getClosedLoopError(0)
-        errorR = 0 #self.motor_rb.getClosedLoopError(0)
+        errorL = self.motor_lb.getClosedLoopError(0)
+        errorR = self.motor_rb.getClosedLoopError(0)
 
         targetR = self.motor_rb.getClosedLoopTarget(0)
         targetL = self.motor_lb.getClosedLoopTarget(0)
@@ -232,7 +239,8 @@ class Drivetrain(Subsystem):
         self.rightError.putNumber("Target", targetR)
 
         if self.logger is not None:
-            self.logger.writerow([t, angle, sensorPL, sensorPR, sensorVL, sensorVR, voltageL, voltageR, self.mode])
+            self.logger.writerow([t, angle, sensorPL, sensorPR, sensorVL, sensorVR, voltageL, voltageR,
+                                  targetL, targetR, errorL, errorR, self.computed_velocity, self.mode])
 
 
 
