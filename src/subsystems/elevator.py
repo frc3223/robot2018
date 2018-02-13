@@ -10,7 +10,7 @@ class Elevator(Subsystem):
         super().__init__('Elevator')
         self.motor2 = ctre.WPI_TalonSRX(3)
         self.motor14 = ctre.WPI_TalonSRX(12)
-        self.solenoid = wpilib.Solenoid(5) #temp num, might be doubleSolenoid
+        self.solenoid = wpilib.Solenoid(5) #temp num, might be DoubleSolenoid
 
 
     def getSolenoidState(self): #returns solenoid bool
@@ -18,3 +18,12 @@ class Elevator(Subsystem):
 
     def setSolenoidState(self, state): #takes bool, sets solenoid
         self.solenoid.set(state)
+
+    def hover(self):
+        pass
+
+    def descend(self, distance):
+        pass
+
+    def ascend(self, distance):
+        pass
