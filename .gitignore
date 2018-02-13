@@ -1,4 +1,8 @@
 .deploy_cfg
+
+src/**/*.csv
+data/*.csv
+src/tests/.pytest_cache/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

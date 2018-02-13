@@ -5,7 +5,7 @@ from robotpy_ext.common_drivers import navx
 import ctre
 import wpilib.drive
 from commandbased import CommandBasedRobot
-from commands import turntoangle
+from commands import turntoangle, turn_profiled
 from wpilib.buttons.joystickbutton import JoystickButton
 from wpilib.buttons.trigger import Trigger
 
@@ -32,15 +32,17 @@ class Gneiss(CommandBasedRobot):
         self.intake = Intake()
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
-        self.angle = turnlikeistuesday.Turnlikeistuesday(90)
+        #self.angle = turnlikeistuesday.Turnlikeistuesday(90)
+        self.angle = turn_profiled.TurnProfiled(90)
         self.DriveForward = driveForward.DriveForward()
+        '''
         self.goToPickup = commands.elevatorPickupHeight()
         self.goToScale = commands.elevatorScaleHeight()
         self.goToSwitch = commands.elevatorSwitchHeight()
         self.goDown = commands.elevatorDownHeight()
         self.pullIn = commands.grabberPullIn()
         self.spitOut = commands.grabberSpitOut()
-
+        '''
 
 
     def autonomousInit(self):

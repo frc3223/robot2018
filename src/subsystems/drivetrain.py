@@ -27,8 +27,10 @@ class Drivetrain(Subsystem):
         self.drive = wpilib.drive.DifferentialDrive(self.motor_rb, self.motor_lb)
         self.navx = navx.AHRS.create_spi()
 
-        self.motor_lb.configSelectedFeedbackSensor(ctre._impl.FeedbackDevice.QuadEncoder,0,0)
-        self.motor_rb.configSelectedFeedbackSensor(ctre._impl.FeedbackDevice.QuadEncoder, 0, 0)
+        self.motor_lb.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder,0,0)
+        self.motor_rb.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder, 0, 0)
+        self.motor_rb.selectProfileSlot(0, 0)
+        self.motor_lb.selectProfileSlot(0, 0)
         self.navx_table = networktables.NetworkTables.getTable('/Sensor/Navx')
         self.leftEncoder_table = networktables.NetworkTables.getTable("/Encoder/Left")
         self.rightEncoder_table = networktables.NetworkTables.getTable("/Encoder/Right")
@@ -40,12 +42,16 @@ class Drivetrain(Subsystem):
         self.timer = wpilib.Timer()
         self.timer.start()
         self.mode = ""
+        self.computed_velocity = 0
 
 
         self.logger = None
 
+    def dumb_turn(self):
+        self.drive.arcadeDrive(0, 0.4, False)
+
     def execute_turn(self, angle):
-        position = angle * 55
+        position = angle / 60.
         self.motor_rb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * position)
         self.motor_lb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * position)
         self.drive.feed()
@@ -58,11 +64,54 @@ class Drivetrain(Subsystem):
         if wpilib.RobotBase.isSimulation():
             filepath = './drivetrain.csv'
         self.logger = csv.writer(open(filepath, 'w'))
-        self.logger.writerow(["time", "heading", "enc_pos_l", "enc_pos_r", "enc_vel_l", "enc_vel_r", "voltage_l", "voltage_r", "mode"])
+        self.logger.writerow(["time", "heading", "enc_pos_l", "enc_pos_r", "enc_vel_l", "enc_vel_r",
+                              "voltage_l", "voltage_r",
+                              "target_l", "target_r", "error_l", "error_r",
+                              "computed_velocity", "mode"])
 
     def zeroEncoders(self):
         self.motor_rb.setSelectedSensorPosition(0, 0, 0)
         self.motor_lb.setSelectedSensorPosition(0, 0, 0)
+
+    def zeroNavx(self):
+        self.navx.reset()
+
+    def initialize_driveTurnlike(self):
+        #The PID values with the motors
+        self.zeroEncoders()
+        self.motor_rb.configMotionAcceleration(int(self.getEncoderAccel(1.25)), 0)
+        self.motor_lb.configMotionAcceleration(int(self.getEncoderAccel(1.25)), 0)
+        self.motor_rb.configMotionCruiseVelocity(int(self.getEncoderVelocity(2.5)), 0)
+        self.motor_lb.configMotionCruiseVelocity(int(self.getEncoderVelocity(2.5)), 0)
+        self.motor_rb.configNominalOutputForward(.1, 0)
+        self.motor_lb.configNominalOutputForward(.1, 0)
+        self.motor_rb.configNominalOutputReverse(-0.1, 0)
+        self.motor_lb.configNominalOutputReverse(-0.1, 0)
+        self.motor_rb.configPeakOutputForward(0.4, 0)
+        self.motor_lb.configPeakOutputForward(0.4, 0)
+        self.motor_rb.configPeakOutputReverse(-0.4, 0)
+        self.motor_lb.configPeakOutputReverse(-0.4, 0)
+        self.motor_rb.selectProfileSlot(0, 0)
+        self.motor_lb.selectProfileSlot(0, 0)
+        # self.motor_rb.config_kF(0, 0, 0)
+        # self.motor_lb.config_kF(0, 0, 0)
+        self.motor_rb.config_kP(0, 0.18, 0)
+        self.motor_lb.config_kP(0, 0.18, 0)
+        self.motor_rb.config_kI(0, 0, 0)
+        self.motor_lb.config_kI(0, 0, 0)
+        self.motor_rb.config_kD(0, 8, 0)
+        self.motor_lb.config_kD(0, 8, 0)
+
+    def uninitialize_driveTurnlike(self):
+        #The PID values with the motors
+        self.motor_rb.configNominalOutputForward(0, 0)
+        self.motor_lb.configNominalOutputForward(0, 0)
+        self.motor_rb.configNominalOutputReverse(0, 0)
+        self.motor_lb.configNominalOutputReverse(0, 0)
+        self.motor_rb.configPeakOutputForward(1, 0)
+        self.motor_lb.configPeakOutputForward(1, 0)
+        self.motor_rb.configPeakOutputReverse(-1, 0)
+        self.motor_lb.configPeakOutputReverse(-1, 0)
 
     def initilize_driveForward(self):
         #The PID values with the motors
@@ -90,6 +139,35 @@ class Drivetrain(Subsystem):
         self.motor_rb.config_kD(0, 2, 0)
         self.motor_lb.config_kD(0, 2, 0)
 
+    def initialize_velocity_closedloop(self):
+        self.motor_rb.configNominalOutputForward(0, 0)
+        self.motor_lb.configNominalOutputForward(0, 0)
+        self.motor_rb.configNominalOutputReverse(0, 0)
+        self.motor_lb.configNominalOutputReverse(0, 0)
+        self.motor_rb.configPeakOutputForward(1, 0)
+        self.motor_lb.configPeakOutputForward(1, 0)
+        self.motor_rb.configPeakOutputReverse(-1, 0)
+        self.motor_lb.configPeakOutputReverse(-1, 0)
+        self.motor_rb.selectProfileSlot(0, 0)
+        self.motor_lb.selectProfileSlot(0, 0)
+
+        self.motor_rb.config_kF(0, 0.88, 0)
+        self.motor_rb.config_kP(0, 3.18, 0)
+        self.motor_rb.config_kI(0, 0.01, 0)
+        self.motor_rb.config_kD(0, 450, 0)
+
+        self.motor_lb.config_kF(0, 0.88, 0)
+        self.motor_lb.config_kP(0, 3.18, 0)
+        self.motor_lb.config_kI(0, 0.01, 0)
+        self.motor_lb.config_kD(0, 450, 0)
+
+    def set_turn_velocity(self, v_degps):
+        velocity_ratio = 1.6
+        #self.computed_velocity = v_encp100ms = velocity_ratio * v_degps
+        self.computed_velocity = v_encp100ms = 200
+        self.motor_rb.set(ctre.ControlMode.Velocity, v_encp100ms)
+        self.motor_lb.set(ctre.ControlMode.Velocity, v_encp100ms)
+
     def execute_driveforward(self, positionL, positionR):
         self.motor_rb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * positionR)
         self.motor_lb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * positionL)
@@ -104,7 +182,8 @@ class Drivetrain(Subsystem):
     def end_driveforward(self):
         self.motor_rb.set(0)
         self.motor_lb.set(0)
-        # doesn't compensate for deceleration
+
+    off = end_driveforward
 
     def getEncoderVelocity(self, fps):
         return fps*self.ratio/10
@@ -117,7 +196,6 @@ class Drivetrain(Subsystem):
         #Variables for the Navx
         t = self.timer.get()
         angle = self.navx.getAngle()
-        self.navx.reset()
         self.navx_table.putNumber('Angle', angle)
 
         #Variables used for the dashboard
@@ -133,8 +211,8 @@ class Drivetrain(Subsystem):
         sensorVR = self.motor_rb.getSelectedSensorVelocity(0)
         self.rightEncoder_table.putNumber("Velocity", sensorVR)
 
-        voltageL = self.motor_lb.get()
-        voltageR = self.motor_rb.get()
+        voltageL = self.motor_lb.getMotorOutputPercent()
+        voltageR = self.motor_rb.getMotorOutputPercent()
 
         errorL = self.motor_lb.getClosedLoopError(0)
         errorR = self.motor_rb.getClosedLoopError(0)
@@ -145,8 +223,8 @@ class Drivetrain(Subsystem):
         voltageL2 = self.motor_lb.getBusVoltage()
         voltageR2 = self.motor_rb.getBusVoltage()
 
-        iErrorL = self.motor_lb.getIntegralAccumulator(0)
-        iErrorR = self.motor_rb.getIntegralAccumulator(0)
+        iErrorL = 0 #self.motor_lb.getIntegralAccumulator(0)
+        iErrorR = 0 #self.motor_rb.getIntegralAccumulator(0)
 
         self.leftError.putNumber("Value", errorL)
         self.rightError.putNumber("Value", errorR)
@@ -154,14 +232,15 @@ class Drivetrain(Subsystem):
         self.leftError.putNumber("I", iErrorL)
         self.rightError.putNumber("I", iErrorR)
 
-        self.leftError.putNumber("Voltage", voltageL2)
-        self.rightError.putNumber("Voltage", voltageR2)
+        self.leftError.putNumber("Voltage", voltageL)
+        self.rightError.putNumber("Voltage", voltageR)
 
         self.leftError.putNumber("Target", targetL)
         self.rightError.putNumber("Target", targetR)
 
         if self.logger is not None:
-            self.logger.writerow([t, angle, sensorPL, sensorPR, sensorVL, sensorVR, voltageL, voltageR, self.mode])
+            self.logger.writerow([t, angle, sensorPL, sensorPR, sensorVL, sensorVR, voltageL, voltageR,
+                                  targetL, targetR, errorL, errorR, self.computed_velocity, self.mode])
 
 
 
