@@ -46,8 +46,11 @@ class Drivetrain(Subsystem):
 
         self.logger = None
 
+    def dumb_turn(self):
+        self.drive.arcadeDrive(0, 0.4, False)
+
     def execute_turn(self, angle):
-        position = angle / 55.
+        position = angle / 60.
         self.motor_rb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * position)
         self.motor_lb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * position)
         self.drive.feed()
@@ -68,6 +71,43 @@ class Drivetrain(Subsystem):
 
     def zeroNavx(self):
         self.navx.reset()
+
+    def initialize_driveTurnlike(self):
+        #The PID values with the motors
+        self.zeroEncoders()
+        self.motor_rb.configMotionAcceleration(int(self.getEncoderAccel(1.25)), 0)
+        self.motor_lb.configMotionAcceleration(int(self.getEncoderAccel(1.25)), 0)
+        self.motor_rb.configMotionCruiseVelocity(int(self.getEncoderVelocity(2.5)), 0)
+        self.motor_lb.configMotionCruiseVelocity(int(self.getEncoderVelocity(2.5)), 0)
+        self.motor_rb.configNominalOutputForward(.1, 0)
+        self.motor_lb.configNominalOutputForward(.1, 0)
+        self.motor_rb.configNominalOutputReverse(-0.1, 0)
+        self.motor_lb.configNominalOutputReverse(-0.1, 0)
+        self.motor_rb.configPeakOutputForward(0.4, 0)
+        self.motor_lb.configPeakOutputForward(0.4, 0)
+        self.motor_rb.configPeakOutputReverse(-0.4, 0)
+        self.motor_lb.configPeakOutputReverse(-0.4, 0)
+        self.motor_rb.selectProfileSlot(0, 0)
+        self.motor_lb.selectProfileSlot(0, 0)
+        # self.motor_rb.config_kF(0, 0, 0)
+        # self.motor_lb.config_kF(0, 0, 0)
+        self.motor_rb.config_kP(0, 0.18, 0)
+        self.motor_lb.config_kP(0, 0.18, 0)
+        self.motor_rb.config_kI(0, 0, 0)
+        self.motor_lb.config_kI(0, 0, 0)
+        self.motor_rb.config_kD(0, 8, 0)
+        self.motor_lb.config_kD(0, 8, 0)
+
+    def uninitialize_driveTurnlike(self):
+        #The PID values with the motors
+        self.motor_rb.configNominalOutputForward(0, 0)
+        self.motor_lb.configNominalOutputForward(0, 0)
+        self.motor_rb.configNominalOutputReverse(0, 0)
+        self.motor_lb.configNominalOutputReverse(0, 0)
+        self.motor_rb.configPeakOutputForward(1, 0)
+        self.motor_lb.configPeakOutputForward(1, 0)
+        self.motor_rb.configPeakOutputReverse(-1, 0)
+        self.motor_lb.configPeakOutputReverse(-1, 0)
 
     def initilize_driveForward(self):
         #The PID values with the motors
@@ -149,7 +189,6 @@ class Drivetrain(Subsystem):
         #Variables for the Navx
         t = self.timer.get()
         angle = self.navx.getAngle()
-        self.navx.reset()
         self.navx_table.putNumber('Angle', angle)
 
         #Variables used for the dashboard
@@ -165,8 +204,8 @@ class Drivetrain(Subsystem):
         sensorVR = self.motor_rb.getSelectedSensorVelocity(0)
         self.rightEncoder_table.putNumber("Velocity", sensorVR)
 
-        voltageL = self.motor_lb.get()
-        voltageR = self.motor_rb.get()
+        voltageL = self.motor_lb.getMotorOutputPercent()
+        voltageR = self.motor_rb.getMotorOutputPercent()
 
         errorL = 0 #self.motor_lb.getClosedLoopError(0)
         errorR = 0 #self.motor_rb.getClosedLoopError(0)
@@ -186,8 +225,8 @@ class Drivetrain(Subsystem):
         self.leftError.putNumber("I", iErrorL)
         self.rightError.putNumber("I", iErrorR)
 
-        self.leftError.putNumber("Voltage", voltageL2)
-        self.rightError.putNumber("Voltage", voltageR2)
+        self.leftError.putNumber("Voltage", voltageL)
+        self.rightError.putNumber("Voltage", voltageR)
 
         self.leftError.putNumber("Target", targetL)
         self.rightError.putNumber("Target", targetR)
