@@ -16,7 +16,9 @@ class DriveForward(wpilib.command.Command):
 
 
     def execute(self):
-        Position = 25
+        #Position = FT needed to go.
+        #PositionR = Position, PositionL = -Position
+        Position = 16.5
         self.drivetrain.execute_driveforward(Position, -Position)
 
 
