@@ -21,14 +21,12 @@ class TurnProfiled(wpilib.command.Command):
         self.timer.start()
 
     def execute(self):
-        '''
         dt = self.timer.get()
         self.timer.reset()
         pos = self.drivetrain.getAngle()
         self.profiler.calculate_new_velocity(pos, dt)
         self.drivetrain.set_turn_velocity(self.profiler.current_target_v)
-        '''
-        self.drivetrain.set_turn_velocity(20)
+        #self.drivetrain.set_turn_velocity(20)
 
     def isFinished(self):
         return False
