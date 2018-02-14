@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-#Imports for the code that adds the needed libraries
 import wpilib
-from robotpy_ext.common_drivers import navx
 import ctre
 import wpilib.drive
+import networktables
+import commands
+from robotpy_ext.common_drivers import navx
 from commandbased import CommandBasedRobot
 from commands import turntoangle, turn_profiled
 from wpilib.buttons.joystickbutton import JoystickButton
@@ -13,12 +14,12 @@ from oi import getJoystick
 from subsystems import (Drivetrain, Elevator, Intake)
 from wpilib.command import Command
 from commands.drive import Drive
-import networktables
-from commands import driveForward
-from commands import turnlikeistuesday
-import commands
+from commands import (
+    driveForward, 
+    turnlikeistuesday, 
+    automous, 
+    autoTimeBased)
 from wpilib.command import scheduler
-from commands import automous
 
 class Gneiss(CommandBasedRobot):
     '''Main robot class'''
@@ -37,6 +38,7 @@ class Gneiss(CommandBasedRobot):
         self.angle = turn_profiled.TurnProfiled(90)
         #self.driveForward = driveForward.DriveForward(10)
         self.driveForward = automous.Test()
+        self.auto = autoTimeBased.AutoTimeBased()
         '''
         self.goToPickup = commands.elevatorPickupHeight()
         self.goToScale = commands.elevatorScaleHeight()
@@ -69,6 +71,11 @@ class Gneiss(CommandBasedRobot):
         b3.whenPressed(self.driveForward)
         b4.cancelWhenPressed(self.driveForward)
 
+        b5 = JoystickButton(self.joystick, 5) #leftbumper
+        b6 = JoystickButton(self.joystick, 6) #rightbumper
+        b5.whenPressed(self.auto)
+        b6.cancelWhenPressed(self.auto)
+
         '''
         pickupheight_button = JoystickButton(self.joystick, 1) #A
         pickupheight_button.whenPressed(self.goToPickup)
@@ -82,6 +89,7 @@ class Gneiss(CommandBasedRobot):
         spitout_button.whenPressed(self.spitOut)
         pullin_button = JoystickButton(self.joystick, 5) #Left Bumper
         pullin_button.whenPressed(self.pullIn)
+        
         '''
 
 

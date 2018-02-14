@@ -11,3 +11,4 @@ class grabberSpitOut(wpilib.command.Command):
         #set both motors to full forward speed
         self.intake.motor_leftWheel_set(1)
         self.intake.motor_rightWheel_set(1)
+

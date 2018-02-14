@@ -115,7 +115,7 @@ class Drivetrain(Subsystem):
 
     def initilize_driveForward(self):
         self.mode = "Forward"
-        #The PID values with the motors
+        #The PID values with the motors for drive forward
         self.zeroEncoders()
         self.motor_rb.configMotionAcceleration(int(self.getEncoderAccel(5)), 0)
         self.motor_lb.configMotionAcceleration(int(self.getEncoderAccel(5)), 0)
