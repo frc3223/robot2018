@@ -18,6 +18,7 @@ from commands import driveForward
 from commands import turnlikeistuesday
 import commands
 from wpilib.command import scheduler
+from commands import automous
 
 class Gneiss(CommandBasedRobot):
     '''Main robot class'''
@@ -34,7 +35,8 @@ class Gneiss(CommandBasedRobot):
         self.joystick = getJoystick()
         #self.angle = turnlikeistuesday.Turnlikeistuesday(90)
         self.angle = turn_profiled.TurnProfiled(90)
-        self.DriveForward = driveForward.DriveForward()
+        #self.driveForward = driveForward.DriveForward(10)
+        self.driveForward = automous.Test()
         '''
         self.goToPickup = commands.elevatorPickupHeight()
         self.goToScale = commands.elevatorScaleHeight()
@@ -64,8 +66,8 @@ class Gneiss(CommandBasedRobot):
 
         b3 = JoystickButton(self.joystick, 3) #X
         b4 = JoystickButton(self.joystick, 4) #Y
-        b3.whenPressed(self.DriveForward)
-        b4.cancelWhenPressed(self.DriveForward)
+        b3.whenPressed(self.driveForward)
+        b4.cancelWhenPressed(self.driveForward)
 
         '''
         pickupheight_button = JoystickButton(self.joystick, 1) #A

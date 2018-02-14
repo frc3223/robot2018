@@ -114,24 +114,25 @@ class Drivetrain(Subsystem):
         self.motor_lb.configPeakOutputReverse(-1, 0)
 
     def initilize_driveForward(self):
+        self.mode = "Forward"
         #The PID values with the motors
         self.zeroEncoders()
         self.motor_rb.configMotionAcceleration(int(self.getEncoderAccel(5)), 0)
         self.motor_lb.configMotionAcceleration(int(self.getEncoderAccel(5)), 0)
         self.motor_rb.configMotionCruiseVelocity(int(self.getEncoderVelocity(5)), 0)
         self.motor_lb.configMotionCruiseVelocity(int(self.getEncoderVelocity(5)), 0)
-        # self.motor_rb.configNominalOutputForward(0, 0)
-        # self.motor_lb.configNominalOutputForward(0, 0)
-        # self.motor_rb.configNominalOutputReverse(0, 0)
-        # self.motor_lb.configNominalOutputReverse(0, 0)
-        # self.motor_rb.configPeakOutputForward(1, 0)
-        # self.motor_lb.configPeakOutputForward(1, 0)
-        # self.motor_rb.configPeakOutputReverse(-1, 0)
-        # self.motor_lb.configPeakOutputReverse(-1, 0)
+        self.motor_rb.configNominalOutputForward(0, 0)
+        self.motor_lb.configNominalOutputForward(0, 0)
+        self.motor_rb.configNominalOutputReverse(0, 0)
+        self.motor_lb.configNominalOutputReverse(0, 0)
+        self.motor_rb.configPeakOutputForward(1, 0)
+        self.motor_lb.configPeakOutputForward(1, 0)
+        self.motor_rb.configPeakOutputReverse(-1, 0)
+        self.motor_lb.configPeakOutputReverse(-1, 0)
         self.motor_rb.selectProfileSlot(0, 0)
         self.motor_lb.selectProfileSlot(0, 0)
-        # self.motor_rb.config_kF(0, 0, 0)
-        # self.motor_lb.config_kF(0, 0, 0)
+        self.motor_rb.config_kF(0, 0, 0)
+        self.motor_lb.config_kF(0, 0, 0)
         self.motor_rb.config_kP(0, 0.18, 0)
         self.motor_lb.config_kP(0, 0.18, 0)
         self.motor_rb.config_kI(0, 0, 0)
@@ -177,15 +178,18 @@ class Drivetrain(Subsystem):
         self.motor_lb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * positionL)
         self.drive.feed()
 
-    def isFinished_driveforward(self):
-        return False
+    def isFinished_driveforward(self, target):
         sensorPL = self.motor_lb.getSelectedSensorPosition(0)
-        return sensorPL > 3.5 * self.ratio
+        a1 = (target-0.2)*self.ratio
+        a2 = (target+0.2)*self.ratio
+        if a1 < sensorPL < a2:
+            return True
 
 
     def end_driveforward(self):
         self.motor_rb.set(0)
         self.motor_lb.set(0)
+        self.mode = ""
 
     off = end_driveforward
 
