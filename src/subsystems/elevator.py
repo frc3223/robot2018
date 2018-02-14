@@ -11,11 +11,11 @@ class Elevator(Subsystem):
 
     def __init__(self):
         super().__init__('Elevator')
-<<<<<<< HEAD
         self.motor2 = ctre.WPI_TalonSRX(3)
         self.motor14 = ctre.WPI_TalonSRX(12)
         self.solenoid = wpilib.Solenoid(5) #temp num, might be DoubleSolenoid
-=======
+
+        self.sensor = wpilip.DigitalInput(9) # temp num, true is on
         self.motor = ctre.WPI_TalonSRX(14)
         self.other_motor = ctre.WPI_TalonSRX(2)
         self.other_motor.follow(self.motor)
@@ -23,12 +23,10 @@ class Elevator(Subsystem):
         self.motor.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder, 0, 0)
         #self.motor.setSensorPhase(True)
         self.elevator_table = networktables.NetworkTables.getTable('/Elevator')
->>>>>>> 7770efdd7a47d1225fc9d3f79d91abc5650f55a6
 
     def initDefaultCommand(self):
         self.setDefaultCommand(ElevatorTest())
 
-<<<<<<< HEAD
     def getSolenoidState(self): #returns solenoid bool
         return self.solenoid.get()
 
@@ -43,7 +41,7 @@ class Elevator(Subsystem):
 
     def ascend(self, distance):
         pass
-=======
+
     def test_drive_positive(self):
         self.motor.set(0.1)
 
@@ -57,7 +55,9 @@ class Elevator(Subsystem):
         self.zeroed = True
         self.motor.setSelectedSensorPosition(0, 0, 0)
 
+    def getSensor(self):
+        return self.sensor.get()
+
     def periodic(self):
         position = self.motor.getSelectedSensorPosition(0)
         self.elevator_table.putNumber("Position", position)
->>>>>>> 7770efdd7a47d1225fc9d3f79d91abc5650f55a6

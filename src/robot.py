@@ -27,6 +27,7 @@ class Gneiss(CommandBasedRobot):
 
         Command.getRobot = lambda x=0: self
         #Variables that are used by the code
+        self.gamecode = wpilib.DriverStation.getGameSpecificMessage()
         self.drivetrain = Drivetrain()
         self.elevator = Elevator()
         self.intake = Intake()
@@ -48,6 +49,7 @@ class Gneiss(CommandBasedRobot):
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
         self.elevator.setSolenoidState(true) #assumes true is open
+
         pass
 
     def disabledInit(self):

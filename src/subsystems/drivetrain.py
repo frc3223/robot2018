@@ -192,11 +192,14 @@ class Drivetrain(Subsystem):
         return fps2*self.ratio/10
 
 
+
+
     def periodic(self):
         #Variables for the Navx
         t = self.timer.get()
         angle = self.navx.getAngle()
         self.navx_table.putNumber('Angle', angle)
+
 
         #Variables used for the dashboard
         sensorPL = self.motor_lb.getSelectedSensorPosition(0)
@@ -241,7 +244,3 @@ class Drivetrain(Subsystem):
         if self.logger is not None:
             self.logger.writerow([t, angle, sensorPL, sensorPR, sensorVL, sensorVR, voltageL, voltageR,
                                   targetL, targetR, errorL, errorR, self.computed_velocity, self.mode])
-
-
-
-
