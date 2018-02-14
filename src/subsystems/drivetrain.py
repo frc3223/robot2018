@@ -150,9 +150,10 @@ class Drivetrain(Subsystem):
         self.motor_lb.configPeakOutputReverse(-1, 0)
         self.motor_rb.selectProfileSlot(0, 0)
         self.motor_lb.selectProfileSlot(0, 0)
+        # tested for counterclockwise turn
 
-        self.motor_rb.config_kF(0, 0.88, 0)
-        self.motor_rb.config_kP(0, 3.18, 0)
+        self.motor_rb.config_kF(0, 1.88, 0)
+        self.motor_rb.config_kP(0, 4.18, 0)
         self.motor_rb.config_kI(0, 0.01, 0)
         self.motor_rb.config_kD(0, 450, 0)
 
@@ -161,10 +162,13 @@ class Drivetrain(Subsystem):
         self.motor_lb.config_kI(0, 0.01, 0)
         self.motor_lb.config_kD(0, 450, 0)
 
+    def getAngle(self):
+        return self.navx.getAngle()
+
     def set_turn_velocity(self, v_degps):
         velocity_ratio = 1.6
-        #self.computed_velocity = v_encp100ms = velocity_ratio * v_degps
-        self.computed_velocity = v_encp100ms = 200
+        self.computed_velocity = v_encp100ms = velocity_ratio * v_degps
+        #self.computed_velocity = v_encp100ms = 32
         self.motor_rb.set(ctre.ControlMode.Velocity, v_encp100ms)
         self.motor_lb.set(ctre.ControlMode.Velocity, v_encp100ms)
 
