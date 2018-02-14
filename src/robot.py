@@ -36,6 +36,7 @@ class Gneiss(CommandBasedRobot):
         #self.angle = turnlikeistuesday.Turnlikeistuesday(90)
         self.angle = turn_profiled.TurnProfiled(90)
         self.DriveForward = driveForward.DriveForward()
+        self.elevatorZero = commands.elevatorZero()
         '''
         self.goToPickup = commands.elevatorPickupHeight()
         self.goToScale = commands.elevatorScaleHeight()
@@ -49,7 +50,7 @@ class Gneiss(CommandBasedRobot):
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
         self.elevator.setSolenoidState(true) #assumes true is open
-
+        wpilib.command.StartCommand(self.elevatorZero)
         pass
 
     def disabledInit(self):
