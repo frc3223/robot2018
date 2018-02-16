@@ -6,6 +6,7 @@ from robotpy_ext.common_drivers import navx
 import ctre
 from commands.drive import Drive
 import networktables
+from data_logger import DataLogger
 
 
 class Drivetrain(Subsystem):
@@ -26,6 +27,7 @@ class Drivetrain(Subsystem):
         self.motors = [self.motor_rb, self.motor_lb, self.motor_rf, self.motor_lf]
         self.drive = wpilib.drive.DifferentialDrive(self.motor_rb, self.motor_lb)
         self.navx = navx.AHRS.create_spi()
+        self.pdp = wpilib.PowerDistributionPanel(16)
 
         self.motor_lb.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder,0,0)
         self.motor_rb.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder, 0, 0)
@@ -60,14 +62,26 @@ class Drivetrain(Subsystem):
         self.setDefaultCommand(Drive())
 
     def init_logger(self):
-        filepath = '/home/lvuser/drivetrain.csv'
-        if wpilib.RobotBase.isSimulation():
-            filepath = './drivetrain.csv'
-        self.logger = csv.writer(open(filepath, 'w'))
-        self.logger.writerow(["time", "heading", "enc_pos_l", "enc_pos_r", "enc_vel_l", "enc_vel_r",
-                              "voltage_l", "voltage_r",
-                              "target_l", "target_r", "error_l", "error_r",
-                              "computed_velocity", "mode"])
+        self.logger = DataLogger('drivetrain.csv')
+        self.logger.add("time", lambda: self.timer.get())
+        self.logger.add("heading", lambda: self.navx.getAngle())
+        self.logger.add("enc_pos_l", lambda: self.motor_lb.getSelectedSensorPosition(0))
+        self.logger.add("enc_pos_r", lambda: self.motor_rb.getSelectedSensorPosition(0))
+        self.logger.add("enc_vel_l", lambda: self.motor_lb.getSelectedSensorVelocity(0))
+        self.logger.add("enc_vel_r", lambda: self.motor_rb.getSelectedSensorVelocity(0))
+        self.logger.add("error_l", lambda: self.motor_lb.getClosedLoopError(0))
+        self.logger.add("error_r", lambda: self.motor_rb.getClosedLoopError(0))
+        self.logger.add("target_l", lambda: self.motor_lb.getClosedLoopTarget(0))
+        self.logger.add("target_r", lambda: self.motor_rb.getClosedLoopTarget(0))
+        self.logger.add("computed_velocity", lambda: self.computed_velocity)
+        self.logger.add("mode", lambda: self.mode)
+        self.logger.add("voltage", lambda: self.motor_lb.getBusVoltage())
+        self.logger.add("voltagep_l", lambda: self.motor_lb.getMotorOutputPercent())
+        self.logger.add("voltagep_r", lambda: self.motor_rb.getMotorOutputPercent())
+        self.logger.add("current_rf", lambda: self.pdp.getCurrent(0))
+        self.logger.add("current_rb", lambda: self.pdp.getCurrent(1))
+        self.logger.add("current_lf", lambda: self.pdp.getCurrent(15))
+        self.logger.add("current_lb", lambda: self.pdp.getCurrent(13))
 
     def zeroEncoders(self):
         self.motor_rb.setSelectedSensorPosition(0, 0, 0)
@@ -202,7 +216,6 @@ class Drivetrain(Subsystem):
 
     def periodic(self):
         #Variables for the Navx
-        t = self.timer.get()
         angle = self.navx.getAngle()
         self.navx_table.putNumber('Angle', angle)
 
@@ -222,34 +235,9 @@ class Drivetrain(Subsystem):
         voltageL = self.motor_lb.getMotorOutputPercent()
         voltageR = self.motor_rb.getMotorOutputPercent()
 
-        errorL = self.motor_lb.getClosedLoopError(0)
-        errorR = self.motor_rb.getClosedLoopError(0)
-
-        targetR = self.motor_rb.getClosedLoopTarget(0)
-        targetL = self.motor_lb.getClosedLoopTarget(0)
-
-        voltageL2 = self.motor_lb.getBusVoltage()
-        voltageR2 = self.motor_rb.getBusVoltage()
-
-        iErrorL = 0 #self.motor_lb.getIntegralAccumulator(0)
-        iErrorR = 0 #self.motor_rb.getIntegralAccumulator(0)
-
-        self.leftError.putNumber("Value", errorL)
-        self.rightError.putNumber("Value", errorR)
-
-        self.leftError.putNumber("I", iErrorL)
-        self.rightError.putNumber("I", iErrorR)
-
         self.leftError.putNumber("Voltage", voltageL)
         self.rightError.putNumber("Voltage", voltageR)
 
-        self.leftError.putNumber("Target", targetL)
-        self.rightError.putNumber("Target", targetR)
-
         if self.logger is not None:
-            self.logger.writerow([t, angle, sensorPL, sensorPR, sensorVL, sensorVR, voltageL, voltageR,
-                                  targetL, targetR, errorL, errorR, self.computed_velocity, self.mode])
-
-
-
+            self.logger.log()
 

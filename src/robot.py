@@ -6,7 +6,7 @@ import networktables
 import commands
 from robotpy_ext.common_drivers import navx
 from commandbased import CommandBasedRobot
-from commands import turntoangle, turn_profiled
+from commands import turn_profiled
 from wpilib.buttons.joystickbutton import JoystickButton
 from wpilib.buttons.trigger import Trigger
 
