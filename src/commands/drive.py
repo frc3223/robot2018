@@ -8,8 +8,8 @@ class Drive(wpilib.command.Command):
         self.requires(self.drivetrain)
 
     def initialize(self):
-        self.drivetrain.motor_lb.configOpenLoopRamp(1, 0)
-        self.drivetrain.motor_rb.configOpenLoopRamp(1, 0)
+        self.drivetrain.motor_lb.configOpenLoopRamp(0.2, 0)
+        self.drivetrain.motor_rb.configOpenLoopRamp(0.2, 0)
 
     def execute(self):
         self.drivetrain.mode = "Drive"
