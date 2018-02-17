@@ -12,7 +12,7 @@ class TurnProfiled(wpilib.command.Command):
         self.drivetrain = self.getRobot().drivetrain
         self.requires(self.drivetrain)
         # degrees
-        self.profiler = TrapezoidalProfile(cruise_v=50, a=80, target_pos=angle, tolerance=5)
+        self.profiler = TrapezoidalProfile(cruise_v=25, a=20, target_pos=angle, tolerance=5)
         self.timer = wpilib.Timer()
 
     def initialize(self):
@@ -26,6 +26,7 @@ class TurnProfiled(wpilib.command.Command):
         pos = self.drivetrain.getAngle()
         self.profiler.calculate_new_velocity(pos, dt)
         self.drivetrain.set_turn_velocity(self.profiler.current_target_v)
+        #self.drivetrain.set_turn_velocity(20)
 
     def isFinished(self):
         return False

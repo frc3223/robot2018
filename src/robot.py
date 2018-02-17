@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
+#Imports for the code that adds the needed libraries
 import wpilib
+from robotpy_ext.common_drivers import navx
 import ctre
 import wpilib.drive
-import networktables
-import commands
-from robotpy_ext.common_drivers import navx
 from commandbased import CommandBasedRobot
-from commands import turn_profiled
+from commands import turntoangle, turn_profiled
 from wpilib.buttons.joystickbutton import JoystickButton
 from wpilib.buttons.trigger import Trigger
 
@@ -14,21 +13,22 @@ from oi import getJoystick
 from subsystems import (Drivetrain, Elevator, Intake)
 from wpilib.command import Command
 from commands.drive import Drive
-from commands import (
-    driveForward, 
-    turnlikeistuesday, 
-    automous, 
-    autoTimeBased)
+import networktables
+from commands import driveForward
+from commands import turnlikeistuesday
+import commands
 from wpilib.command import scheduler
+from commands import automous
 
 class Gneiss(CommandBasedRobot):
     '''Main robot class'''
-    
+
     def robotInit(self):
         '''Robot-wide initialization code should go here'''
 
         Command.getRobot = lambda x=0: self
         #Variables that are used by the code
+        self.gamecode = "rlr"                 #wpilib.DriverStation.getGameSpecificMessage()
         self.drivetrain = Drivetrain()
         self.elevator = Elevator()
         self.intake = Intake()
@@ -36,9 +36,13 @@ class Gneiss(CommandBasedRobot):
         self.joystick = getJoystick()
         #self.angle = turnlikeistuesday.Turnlikeistuesday(90)
         self.angle = turn_profiled.TurnProfiled(90)
+
+        self.DriveForward = driveForward.DriveForward()
+        self.elevatorZero = elevatorZero.elevatorZero()
+
         #self.driveForward = driveForward.DriveForward(10)
         self.driveForward = automous.Test()
-        self.auto = autoTimeBased.AutoTimeBased()
+
         '''
         self.goToPickup = commands.elevatorPickupHeight()
         self.goToScale = commands.elevatorScaleHeight()
@@ -51,7 +55,7 @@ class Gneiss(CommandBasedRobot):
 
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
-        pass
+        gotoSWitch.gotoSwitch(self.gamecode[1:])
 
     def disabledInit(self):
         '''Called only at the beginning of disabled mode'''
@@ -71,11 +75,6 @@ class Gneiss(CommandBasedRobot):
         b3.whenPressed(self.driveForward)
         b4.cancelWhenPressed(self.driveForward)
 
-        b5 = JoystickButton(self.joystick, 5) #leftbumper
-        b6 = JoystickButton(self.joystick, 6) #rightbumper
-        b5.whenPressed(self.auto)
-        b6.cancelWhenPressed(self.auto)
-
         '''
         pickupheight_button = JoystickButton(self.joystick, 1) #A
         pickupheight_button.whenPressed(self.goToPickup)
@@ -89,7 +88,6 @@ class Gneiss(CommandBasedRobot):
         spitout_button.whenPressed(self.spitOut)
         pullin_button = JoystickButton(self.joystick, 5) #Left Bumper
         pullin_button.whenPressed(self.pullIn)
-        
         '''
 
 
