@@ -27,8 +27,16 @@ def test_profiler():
     profiler.calculate_new_velocity(18.00, 0.02)
     assert math.isclose(profiler.current_target_v, 0.00)
 
-def test_robot1(robot):
+@pytest.mark.parametrize("gamecode, commandname", [
+    ("lrr", "gotoSwitchL"),
+    ("rlr", "gotoScaleL"),
+    ("rrr", "gotoSwitchL"),
+    ("lll", "gotoSwitchL"),
+])
+def test_robot1(robot, gamecode, commandname):
     robot.robotInit()
+    robot.gamecode = gamecode
     robot.autonomousInit()
+    robot.autonomousPeriodic()
 
-    assert robot.drivetrain.getCurrentCommand().getName() == 'elevatorZero'
+    assert robot.drivetrain.getCurrentCommandName() == commandname

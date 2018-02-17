@@ -33,7 +33,7 @@ class Gneiss(CommandBasedRobot):
         Command.getRobot = lambda x=0: self
         #Variables that are used by the code
         self.startSide = "l" #starting side
-        self.gamecode = wpilib.DriverStation.getInstance().getGameSpecificMessage()
+        self.gamecode =  wpilib.DriverStation.getInstance().getGameSpecificMessage()
         self.drivetrain = Drivetrain()
         self.elevator = Elevator()
         self.intake = Intake()
@@ -60,15 +60,16 @@ class Gneiss(CommandBasedRobot):
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
         if self.startSide == "l":
-            if self.gamecode[:1] == "l":
-                gotoSwitchL.gotoSwitchL("l").start() #L the Letter
+            if self.gamecode[:1] == "l": #L the Letter
+                gotoSwitchL.gotoSwitchL("l").start()
             elif self.gamecode[:2][1:] == "l":
                 gotoScaleL.gotoScaleL("l").start()
             else:
                 gotoSwitchL.gotoSwitchL("r").start()
 
 
-
+    def autonomousPeriodic(self):
+        wpilib.command.Scheduler.getInstance().run()
 
     def disabledInit(self):
         '''Called only at the beginning of disabled mode'''
