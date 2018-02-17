@@ -28,7 +28,7 @@ class Gneiss(CommandBasedRobot):
 
         Command.getRobot = lambda x=0: self
         #Variables that are used by the code
-        self.gamecode = wpilib.DriverStation.getGameSpecificMessage()
+        self.gamecode = "rlr"                 #wpilib.DriverStation.getGameSpecificMessage()
         self.drivetrain = Drivetrain()
         self.elevator = Elevator()
         self.intake = Intake()

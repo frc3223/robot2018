@@ -250,5 +250,4 @@ class Drivetrain(Subsystem):
         self.rightError.putNumber("Target", targetR)
 
         if self.logger is not None:
-            self.logger.writerow([t, angle, sensorPL, sensorPR, sensorVL, sensorVR, voltageL, voltageR,
-                                  targetL, targetR, errorL, errorR, self.computed_velocity, self.mode])
+            self.logger.log()
