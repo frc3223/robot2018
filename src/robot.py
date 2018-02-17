@@ -18,7 +18,10 @@ from commands import (
     driveForward,
     turnlikeistuesday,
     automous,
-    autoTimeBased)
+    autoTimeBased,
+    elevatorZero,
+    gotoScaleL,
+    gotoSwitchL)
 from wpilib.command import scheduler
 
 class Gneiss(CommandBasedRobot):
@@ -30,7 +33,7 @@ class Gneiss(CommandBasedRobot):
         Command.getRobot = lambda x=0: self
         #Variables that are used by the code
         self.startSide = "l" #starting side
-        self.gamecode = "rlr"                 #wpilib.DriverStation.getGameSpecificMessage()
+        self.gamecode = wpilib.DriverStation.getInstance().getGameSpecificMessage()
         self.drivetrain = Drivetrain()
         self.elevator = Elevator()
         self.intake = Intake()
@@ -38,7 +41,7 @@ class Gneiss(CommandBasedRobot):
         self.joystick = getJoystick()
         #self.angle = turnlikeistuesday.Turnlikeistuesday(90)
         self.angle = turn_profiled.TurnProfiled(90)
-        self.DriveForward = driveForward.DriveForward()
+        self.DriveForward = driveForward.DriveForward(.2)
         self.elevatorZero = elevatorZero.elevatorZero()
 
         #self.driveForward = driveForward.DriveForward(10)
@@ -57,12 +60,12 @@ class Gneiss(CommandBasedRobot):
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
         if self.startSide == "l":
-            if self.gamecode[1:] == "l": #L the Letter
-                gotoSwitchL.gotoSwitchL("l").start()
-            else: if self.gamecode[:2][1:] == "l":
-                goToScaleL.goToScaleL("l").start()
+            if self.gamecode[:1] == "l":
+                gotoSwitchL.gotoSwitchL("l").start() #L the Letter
+            elif self.gamecode[:2][1:] == "l":
+                gotoScaleL.gotoScaleL("l").start()
             else:
-                goToSwitchL.gotoSwitchL("r").start()
+                gotoSwitchL.gotoSwitchL("r").start()
 
 
 
@@ -87,8 +90,8 @@ class Gneiss(CommandBasedRobot):
 
         b5 = JoystickButton(self.joystick, 5) #leftbumper
         b6 = JoystickButton(self.joystick, 6) #rightbumper
-        b5.whenPressed(self.auto)
-        b6.cancelWhenPressed(self.auto)
+        #b5.whenPressed(self.auto)
+        #b6.cancelWhenPressed(self.auto)
 
         '''
         pickupheight_button = JoystickButton(self.joystick, 1) #A

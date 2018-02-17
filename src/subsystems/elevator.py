@@ -1,6 +1,6 @@
 import ctre
 import networktables
-
+import wpilib
 from wpilib.command.subsystem import Subsystem
 from commands.elevator_test import ElevatorTest
 
@@ -14,7 +14,7 @@ class Elevator(Subsystem):
         self.motor2 = ctre.WPI_TalonSRX(3)
         self.motor14 = ctre.WPI_TalonSRX(12)
 
-        self.sensor = wpilip.DigitalInput(9) # temp num, true is on
+        self.sensor = wpilib.DigitalInput(9) # temp num, true is on
         self.motor = ctre.WPI_TalonSRX(14)
         self.other_motor = ctre.WPI_TalonSRX(2)
         self.other_motor.follow(self.motor)

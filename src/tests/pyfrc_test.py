@@ -6,6 +6,7 @@ from pyfrc.tests import *
 import pytest
 import math
 from profiler import TrapezoidalProfile
+from robot import Gneiss
 
 def test_profiler():
     # 3 m/s, 4 m/s^2, 18 m, 0.5 m
@@ -26,3 +27,8 @@ def test_profiler():
     profiler.calculate_new_velocity(18.00, 0.02)
     assert math.isclose(profiler.current_target_v, 0.00)
 
+def test_robot1(robot):
+    robot.robotInit()
+    robot.autonomousInit()
+
+    assert robot.drivetrain.getCurrentCommand().getName() == 'elevatorZero'
