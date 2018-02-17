@@ -5,12 +5,12 @@ from commands import driveForward
 from subsystems import drivetrain
 
 
-class gotoScale(wpilib.command.CommandGroup):
+class gotoSwitch(wpilib.command.CommandGroup):
 
-    def __init__(self):
+    def __init__(self, code):
         super().__init__("gotoSwitch")
         self.elevatorZero = self.getRobot().elevatorZero
-        self.gamecode = self.getRobot().gamecode[[1:] #get first team switch character via substrings
+        self.gamecode = code
 
     def initialize(self):
         pass
@@ -22,11 +22,11 @@ class gotoScale(wpilib.command.CommandGroup):
             AddSequential(turn_profiled.TurnProfiled(90)) #turn x degrees
         else:
             AddSequential(driveForward.DriveForward(10)) #move x feet
-            AddSequential(turn_profiled.TurnProfiled(90)) #turn x degrees
-            AddSequential(driveForward.DriveForward(20))
-            AddSequential(turn_profiled.TurnProfiled(-90))
-            AddSequential(driveForward.DriveForward(4))
-            AddSequential(turn_profiled.TurnProfiled(-90))
+            #AddSequential(turn_profiled.TurnProfiled(90)) #turn x degrees
+            #AddSequential(driveForward.DriveForward(20))
+            #AddSequential(turn_profiled.TurnProfiled(-90))
+            #AddSequential(driveForward.DriveForward(4))
+            #AddSequential(turn_profiled.TurnProfiled(-90))
 
 
 

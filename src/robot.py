@@ -39,7 +39,6 @@ class Gneiss(CommandBasedRobot):
 
         self.DriveForward = driveForward.DriveForward()
         self.elevatorZero = elevatorZero.elevatorZero()
-        self.gotoScale = gotoScale.gotoScale()
 
         #self.driveForward = driveForward.DriveForward(10)
         self.driveForward = automous.Test()
@@ -56,8 +55,7 @@ class Gneiss(CommandBasedRobot):
 
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
-        self.elevator.setSolenoidState(true) #assumes true is open
-        self.goToScale.start()
+        gotoSWitch.gotoSwitch(self.gamecode[1:])
 
     def disabledInit(self):
         '''Called only at the beginning of disabled mode'''
