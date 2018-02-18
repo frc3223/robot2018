@@ -1,5 +1,4 @@
 pyfrc
-pynetconsole
 pynetworktables
 pytest
 robotpy-hal-base
