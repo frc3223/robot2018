@@ -38,8 +38,8 @@ class Gneiss(CommandBasedRobot):
         self.joystick = getJoystick()
         #self.angle = turnlikeistuesday.Turnlikeistuesday(90)
         self.angle = turn_profiled.TurnProfiled(90)
-        self.DriveForward = driveForward.DriveForward()
-        self.elevatorZero = elevatorZero.elevatorZero()
+        self.auto = driveForward.DriveForward(10)
+        '''self.elevatorZero = elevatorZero.elevatorZero()'''
 
         #self.driveForward = driveForward.DriveForward(10)
         self.driveForward = automous.Test()
@@ -56,13 +56,13 @@ class Gneiss(CommandBasedRobot):
 
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
-        if self.startSide == "l":
+        '''if self.startSide == "l":
             if self.gamecode[1:] == "l": #L the Letter
                 gotoSwitchL.gotoSwitchL("l").start()
             else: if self.gamecode[:2][1:] == "l":
                 goToScaleL.goToScaleL("l").start()
             else:
-                goToSwitchL.gotoSwitchL("r").start()
+                goToSwitchL.gotoSwitchL("r").start()'''
 
 
 
