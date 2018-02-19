@@ -15,20 +15,22 @@ from subsystems import (Drivetrain, Elevator, Intake)
 from wpilib.command import Command
 from commands.drive import Drive
 from commands import (
-    driveForward, 
-    turnlikeistuesday, 
-    automous, 
+    driveForward,
+    turnlikeistuesday,
+    automous,
     autoTimeBased)
 from wpilib.command import scheduler
 
 class Gneiss(CommandBasedRobot):
     '''Main robot class'''
-    
+
     def robotInit(self):
         '''Robot-wide initialization code should go here'''
 
         Command.getRobot = lambda x=0: self
         #Variables that are used by the code
+        self.startSide = "l" #starting side
+        self.gamecode = "rlr"                 #wpilib.DriverStation.getGameSpecificMessage()
         self.drivetrain = Drivetrain()
         self.elevator = Elevator()
         self.intake = Intake()
@@ -36,9 +38,12 @@ class Gneiss(CommandBasedRobot):
         self.joystick = getJoystick()
         #self.angle = turnlikeistuesday.Turnlikeistuesday(90)
         self.angle = turn_profiled.TurnProfiled(90)
+        self.DriveForward = driveForward.DriveForward()
+        self.elevatorZero = elevatorZero.elevatorZero()
+
         #self.driveForward = driveForward.DriveForward(10)
         self.driveForward = automous.Test()
-        self.auto = autoTimeBased.AutoTimeBased()
+
         '''
         self.goToPickup = commands.elevatorPickupHeight()
         self.goToScale = commands.elevatorScaleHeight()
@@ -51,7 +56,16 @@ class Gneiss(CommandBasedRobot):
 
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
-        pass
+        if self.startSide == "l":
+            if self.gamecode[1:] == "l": #L the Letter
+                gotoSwitchL.gotoSwitchL("l").start()
+            else: if self.gamecode[:2][1:] == "l":
+                goToScaleL.goToScaleL("l").start()
+            else:
+                goToSwitchL.gotoSwitchL("r").start()
+
+
+
 
     def disabledInit(self):
         '''Called only at the beginning of disabled mode'''
@@ -89,7 +103,7 @@ class Gneiss(CommandBasedRobot):
         spitout_button.whenPressed(self.spitOut)
         pullin_button = JoystickButton(self.joystick, 5) #Left Bumper
         pullin_button.whenPressed(self.pullIn)
-        
+
         '''
 
 
