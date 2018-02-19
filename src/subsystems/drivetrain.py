@@ -21,13 +21,14 @@ class Drivetrain(Subsystem):
         self.motor_rb = ctre.WPI_TalonSRX(1)
         self.motor_rf = ctre.WPI_VictorSPX(17)
         self.motor_lb = ctre.WPI_TalonSRX(13)
-        self.motor_lf = ctre.WPI_VictorSPX(15)
+        self.motor_lf = ctre.WPI_VictorSPX(12)
         self.motor_rf.follow(self.motor_rb)
         self.motor_lf.follow(self.motor_lb)
         self.motors = [self.motor_rb, self.motor_lb, self.motor_rf, self.motor_lf]
         self.drive = wpilib.drive.DifferentialDrive(self.motor_rb, self.motor_lb)
         self.navx = navx.AHRS.create_spi()
         self.pdp = wpilib.PowerDistributionPanel(16)
+        self.pdp2 = wpilib.PowerDistributionPanel(16)
 
         self.motor_lb.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder,0,0)
         self.motor_rb.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder, 0, 0)
