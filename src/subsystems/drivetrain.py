@@ -131,8 +131,8 @@ class Drivetrain(Subsystem):
         self.mode = "Forward"
         #The PID values with the motors for drive forward
         self.zeroEncoders()
-        self.motor_rb.configMotionAcceleration(int(self.getEncoderAccel(5)), 0)
-        self.motor_lb.configMotionAcceleration(int(self.getEncoderAccel(5)), 0)
+        self.motor_rb.configMotionAcceleration(int(self.getEncoderAccel(10)), 0)
+        self.motor_lb.configMotionAcceleration(int(self.getEncoderAccel(10)), 0)
         self.motor_rb.configMotionCruiseVelocity(int(self.getEncoderVelocity(5)), 0)
         self.motor_lb.configMotionCruiseVelocity(int(self.getEncoderVelocity(5)), 0)
         self.motor_rb.configNominalOutputForward(0, 0)
@@ -168,14 +168,38 @@ class Drivetrain(Subsystem):
         # tested for counterclockwise turn
 
         self.motor_rb.config_kF(0, 1.88, 0)
-        self.motor_rb.config_kP(0, 4.18, 0)
-        self.motor_rb.config_kI(0, 0.01, 0)
+        self.motor_rb.config_kP(0, 2.18, 0)
+        self.motor_rb.config_kI(0, 0.00, 0)
         self.motor_rb.config_kD(0, 450, 0)
 
-        self.motor_lb.config_kF(0, 0.88, 0)
-        self.motor_lb.config_kP(0, 3.18, 0)
-        self.motor_lb.config_kI(0, 0.01, 0)
+        self.motor_lb.config_kF(0, 1.88, 0)
+        self.motor_lb.config_kP(0, 2.18, 0)
+        self.motor_lb.config_kI(0, 0.00, 0)
         self.motor_lb.config_kD(0, 450, 0)
+
+
+    def configparameters(self, p, i, f, d, nominal_forward = 0, nominal_reverse = 0, peak_forward = 1, peak_reverse = -1 ):
+        self.motor_rb.configNominalOutputForward(nominal_forward, 0)
+        self.motor_lb.configNominalOutputForward(nominal_forward, 0)
+        self.motor_rb.configNominalOutputReverse(nominal_reverse, 0)
+        self.motor_lb.configNominalOutputReverse(nominal_reverse, 0)
+        self.motor_rb.configPeakOutputForward(peak_forward, 0)
+        self.motor_lb.configPeakOutputForward(peak_forward, 0)
+        self.motor_rb.configPeakOutputReverse(peak_reverse, 0)
+        self.motor_lb.configPeakOutputReverse(peak_reverse, 0)
+        self.motor_rb.selectProfileSlot(0, 0)
+        self.motor_lb.selectProfileSlot(0, 0)
+        # tested for counterclockwise turn
+
+        self.motor_rb.config_kF(0, f, 0)
+        self.motor_rb.config_kP(0, p, 0)
+        self.motor_rb.config_kI(0, i, 0)
+        self.motor_rb.config_kD(0, d, 0)
+
+        self.motor_lb.config_kF(0, f, 0)
+        self.motor_lb.config_kP(0, p, 0)
+        self.motor_lb.config_kI(0, i, 0)
+        self.motor_lb.config_kD(0, d, 0)
 
     def getAngle(self):
         return self.navx.getAngle()
@@ -237,6 +261,7 @@ class Drivetrain(Subsystem):
 
         self.leftError.putNumber("Voltage", voltageL)
         self.rightError.putNumber("Voltage", voltageR)
+
 
         if self.logger is not None:
             self.logger.log()

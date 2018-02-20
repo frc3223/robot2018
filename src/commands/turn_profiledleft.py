@@ -2,7 +2,7 @@ import wpilib.command
 from profiler import TrapezoidalProfile
 
 
-class TurnProfiled(wpilib.command.Command):
+class TurnProfiledleft(wpilib.command.Command):
     """
     velocity closed loop inside the talon,
     in here, listen to gyro and build a motion profile to drive velocity
@@ -12,12 +12,12 @@ class TurnProfiled(wpilib.command.Command):
         self.drivetrain = self.getRobot().drivetrain
         self.requires(self.drivetrain)
         # degrees
-        self.profiler = TrapezoidalProfile(cruise_v=50, a=80, target_pos=angle, tolerance=5)
+        self.profiler = TrapezoidalProfile(cruise_v=80, a=65, target_pos=angle, tolerance=5)
         self.timer = wpilib.Timer()
 
     def initialize(self):
         self.drivetrain.zeroNavx()
-        self.drivetrain.initialize_velocity_closedloop()
+        self.drivetrain.configparameters(p = 2.28, f = 1.88, i = 0, d = 450)
         self.timer.start()
 
     def execute(self):

@@ -6,7 +6,8 @@ import networktables
 import commands
 from robotpy_ext.common_drivers import navx
 from commandbased import CommandBasedRobot
-from commands import turn_profiled
+from commands import turn_profiledright
+from commands import turn_profiledleft
 from wpilib.buttons.joystickbutton import JoystickButton
 from wpilib.buttons.trigger import Trigger
 
@@ -35,9 +36,9 @@ class Gneiss(CommandBasedRobot):
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
         #self.angle = turnlikeistuesday.Turnlikeistuesday(90)
-        self.angle = turn_profiled.TurnProfiled(90)
-        #self.driveForward = driveForward.DriveForward(10)
-        self.driveForward = automous.Test()
+        self.angle = turn_profiledleft.TurnProfiledleft(-90)
+        self.driveForward = driveForward.DriveForward(16)
+        #self.driveForward = automous.Test()
         self.auto = autoTimeBased.AutoTimeBased()
         '''
         self.goToPickup = commands.elevatorPickupHeight()
@@ -48,6 +49,9 @@ class Gneiss(CommandBasedRobot):
         self.spitOut = commands.grabberSpitOut()
         '''
 
+    def teleopPeriodic(self):
+        super().teleopPeriodic()
+        self.table.putString("Joystick", self.joystick.getName())
 
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
