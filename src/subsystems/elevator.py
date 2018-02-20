@@ -64,8 +64,11 @@ class Elevator(Subsystem):
     def ascend(self, distance):
         pass
 
+    def test_drive_x(self, x):
+        self.motor.set(x)
+
     def test_drive_positive(self):
-        self.motor.set(0.1)
+        self.motor.set(0.5)
 
     def test_drive_negative(self):
         self.motor.set(-0.1)

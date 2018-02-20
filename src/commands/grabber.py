@@ -12,9 +12,16 @@ class Grabber(wpilib.command.Command):
         joystick = getJoystick()
         closeArm_trigger = joystick.getRawAxis(3) #Right Trigger
         openArm_trigger = joystick.getRawAxis(2) #Left Trigger
-        if closeArm_trigger < 0: # right trigger triggered
+        if abs(closeArm_trigger) > 0.1: # right trigger triggered
             self.intake.closeGrabber()
-        elif openArm_trigger < 0: #left trigger triggered
+        elif abs(openArm_trigger) > 0.1: #left trigger triggered
             self.intake.openGrabber()
         else:
             self.intake.grabberOff()
+
+        if joystick.getRawButton(5):
+            self.intake.cubeOut()
+        elif joystick.getRawButton(6):
+            self.intake.cubeIn()
+        else:
+            self.intake.intakeWheelsOff()

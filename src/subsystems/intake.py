@@ -1,5 +1,6 @@
 import wpilib
 
+import networktables
 from wpilib.command.subsystem import Subsystem
 from commands import grabber
 
@@ -12,6 +13,7 @@ class Intake(Subsystem):
         self.intake_motor_rightWheel = wpilib.VictorSP(7)
         self.intake_motor_leftWheel = wpilib.VictorSP(9)
         self.limit_switch = wpilib.DigitalOutput(1)
+        self.intake_table = networktables.NetworkTables.getTable('/Intake')
 
     def initDefaultCommand(self):
         self.setDefaultCommand(grabber.Grabber())
@@ -20,13 +22,26 @@ class Intake(Subsystem):
         self.motor_closeOpen_set(-1)
 
     def openGrabber(self):
+        '''
         if self.limit_switch == True:
             self.grabberOff()
-        else:
-            self.motor_closeOpen_set(1)
+        else:'''
+        self.motor_closeOpen_set(1)
 
     def grabberOff(self):
         self.motor_closeOpen_set(0)
+
+    def cubeOut(self):
+        self.intake_motor_rightWheel.set(1)
+        self.intake_motor_leftWheel.set(-1)
+
+    def cubeIn(self):
+        self.intake_motor_rightWheel.set(-1)
+        self.intake_motor_leftWheel.set(1)
+
+    def intakeWheelsOff(self):
+        self.intake_motor_rightWheel.set(0)
+        self.intake_motor_leftWheel.set(0)
 
     def motor_closeOpen_set(self, voltage_percent):
         self.intake_motor_closeOpen.set(voltage_percent)
@@ -36,3 +51,6 @@ class Intake(Subsystem):
 
     def motor_leftWheel_set(self, voltage_percent):
         self.intake_motor_leftWheel.set(voltage_percent)
+
+    def periodic(self):
+        self.intake_table.putBoolean("LimitSwitch", self.limit_switch.get())

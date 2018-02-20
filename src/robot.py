@@ -77,17 +77,17 @@ class Gneiss(CommandBasedRobot):
         self.drivetrain.init_logger()
         b = JoystickButton(self.joystick, 1) #A
         b2 = JoystickButton(self.joystick, 2) #B
-        b.whenPressed(self.angle)
+        #b.whenPressed(self.angle)
         b2.cancelWhenPressed(self.angle)
 
         b3 = JoystickButton(self.joystick, 3) #X
         b4 = JoystickButton(self.joystick, 4) #Y
-        b3.whenPressed(self.driveForward)
+        #b3.whenPressed(self.driveForward)
         b4.cancelWhenPressed(self.driveForward)
 
         b5 = JoystickButton(self.joystick, 5) #leftbumper
         b6 = JoystickButton(self.joystick, 6) #rightbumper
-        b5.whenPressed(self.auto)
+        #b5.whenPressed(self.auto)
         b6.cancelWhenPressed(self.auto)
 
         '''
