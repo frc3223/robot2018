@@ -12,21 +12,27 @@ class Intake(Subsystem):
         self.intake_motor_closeOpen = wpilib.VictorSP(8)
         self.intake_motor_rightWheel = wpilib.VictorSP(7)
         self.intake_motor_leftWheel = wpilib.VictorSP(9)
-        self.limit_switch = wpilib.DigitalOutput(1)
+        self.limit_switch = wpilib.DigitalOutput(0)
         self.intake_table = networktables.NetworkTables.getTable('/Intake')
 
     def initDefaultCommand(self):
         self.setDefaultCommand(grabber.Grabber())
 
-    def closeGrabber(self):
-        self.motor_closeOpen_set(-1)
+    def closeGrabber(self, x):
+        self.motor_closeOpen_set(x)
 
     def openGrabber(self):
         '''
         if self.limit_switch == True:
             self.grabberOff()
         else:'''
-        self.motor_closeOpen_set(1)
+        self.motor_closeOpen_set(-0.5)
+
+    def open2Grabber(self):
+        self.intake_motor_closeOpen.set(-0.1)
+        self.cubeOut()
+
+
 
     def grabberOff(self):
         self.motor_closeOpen_set(0)
