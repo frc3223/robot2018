@@ -72,6 +72,7 @@ class Elevator(Subsystem):
         return ftPerSec * self.ratio/10
 
     def hover(self):
+        self.motor.set(0.1)
         pass
 
     def descend(self, voltage):

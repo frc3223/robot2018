@@ -40,10 +40,6 @@ class Gneiss(CommandBasedRobot):
         self.angle = turn_profiled.TurnProfiled(90)
         self.auto = driveForward.DriveForward(10)
         self.autoTimeBased = autoTimeBased.AutoTimeBased()
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
         '''self.elevatorZero = elevatorZero.elevatorZero()'''
 
         self.driveForward = driveForward.DriveForward(10)
@@ -59,11 +55,6 @@ class Gneiss(CommandBasedRobot):
             else:
                 goToSwitchL.gotoSwitchL("r").start()'''
         self.autoTimeBased.start()
-<<<<<<< Updated upstream
-=======
-
-
->>>>>>> Stashed changes
 
     def disabledInit(self):
         '''Called only at the beginning of disabled mode'''

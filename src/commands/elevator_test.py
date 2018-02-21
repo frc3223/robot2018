@@ -15,9 +15,9 @@ class ElevatorTest(Command):
             x = 0
         self.elevator.test_drive_x(x)
         '''
-        if self.joystick.getRawButton(1): #A pressed
+        if self.joystick.getPOV(0) == 0: #Up on D-pad pressed
             self.elevator.test_drive_positive()
-        elif self.joystick.getRawButton(2): #B pressed
+        elif self.joystick.getPOV(0) == 180: #Down on D-pad pressed
             self.elevator.test_drive_negative()
         else:
-            self.elevator.off()
+            self.elevator.hover()
