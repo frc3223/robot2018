@@ -39,7 +39,7 @@ class AutoTimeBased(wpilib.command.Command):
             self.elevator.ascend(voltage)
 
         elif 5.5 <= self.time.get() <= 6.5:
-            # waits for half a sec then hopefully turns clockwise
+            # waits for half a sec then hopefully turns 90 degrees clockwise
             self.motorturn(0.4)
 
         elif self.time.get() >= 6.5:
