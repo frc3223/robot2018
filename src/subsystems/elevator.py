@@ -58,11 +58,11 @@ class Elevator(Subsystem):
     def hover(self):
         pass
 
-    def descend(self, distance):
+    def descend(self, voltage):
         pass
 
-    def ascend(self, distance):
-        pass
+    def ascend(self, voltage):
+        self.motor.set(voltage)
 
     def test_drive_x(self, x):
         self.motor.set(x)

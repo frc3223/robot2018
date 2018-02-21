@@ -39,6 +39,8 @@ class Gneiss(CommandBasedRobot):
         #self.angle = turnlikeistuesday.Turnlikeistuesday(90)
         self.angle = turn_profiled.TurnProfiled(90)
         self.auto = driveForward.DriveForward(10)
+        self.autoTimeBased = autoTimeBased.AutoTimeBased()
+
         '''self.elevatorZero = elevatorZero.elevatorZero()'''
 
         #self.driveForward = driveForward.DriveForward(10)
@@ -52,8 +54,6 @@ class Gneiss(CommandBasedRobot):
         self.pullIn = commands.grabberPullIn()
         self.spitOut = commands.grabberSpitOut()
         '''
-
-
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
         '''if self.startSide == "l":
@@ -63,9 +63,7 @@ class Gneiss(CommandBasedRobot):
                 goToScaleL.goToScaleL("l").start()
             else:
                 goToSwitchL.gotoSwitchL("r").start()'''
-
-
-
+        self.autoTimeBased.start()
 
     def disabledInit(self):
         '''Called only at the beginning of disabled mode'''
