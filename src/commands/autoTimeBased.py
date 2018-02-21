@@ -1,6 +1,7 @@
 import wpilib
 import wpilib.drive
 import networktables
+import commands
 
 class AutoTimeBased(wpilib.command.Command):
     def __init__(self):
@@ -8,6 +9,8 @@ class AutoTimeBased(wpilib.command.Command):
         self.requires(self.getRobot().drivetrain)
         self.drivetrain = self.getRobot().drivetrain
         self.Time_table = networktables.NetworkTables.getTable('/Time/')
+        self.elevator = self.getRobot().elevator
+        self.requires(self.elevator)
 
     def initialize(self):
         self.time = wpilib.Timer()
@@ -28,15 +31,18 @@ class AutoTimeBased(wpilib.command.Command):
         deltaTime = self.time.get()
         self.Time_table.putNumber("Time", deltaTime)
         self.motorset(0.2)
+
         if 5.0 <= self.time.get() <= 5.5:
             #should drive x feet then kills motor
             self.motorset(0)
+            voltage = 0.1
+            self.elevator.ascend(voltage)
 
-        elif 5.5 <= self.time.get() <= 6.0:
+        elif 5.5 <= self.time.get() <= 6.5:
             # waits for half a sec then hopefully turns clockwise
-            self.motorturn(0.3)
+            self.motorturn(0.4)
 
-        elif self.time.get() >= 6.0:
+        elif self.time.get() >= 6.5:
             #stops again
             self.drivetrain.off()
 
