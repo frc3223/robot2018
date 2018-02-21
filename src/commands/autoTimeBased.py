@@ -30,13 +30,15 @@ class AutoTimeBased(wpilib.command.Command):
     def execute(self):
         deltaTime = self.time.get()
         self.Time_table.putNumber("Time", deltaTime)
-        self.motorset(0.2)
+        if self.time.get() <=5.0:
+            self.motorset(0.2)
+            voltage = 0.3
+            self.elevator.ascend(voltage)
 
         if 5.0 <= self.time.get() <= 5.5:
             #should drive x feet then kills motor
             self.motorset(0)
-            voltage = 0.1
-            self.elevator.ascend(voltage)
+
 
         elif 5.5 <= self.time.get() <= 6.5:
             # waits for half a sec then hopefully turns 90 degrees clockwise
@@ -45,6 +47,8 @@ class AutoTimeBased(wpilib.command.Command):
         elif self.time.get() >= 6.5:
             #stops again
             self.drivetrain.off()
+            voltage = 0
+            self.elevator.ascend(voltage)
 
     def isFinished(self):
         if self.time.get() <= 15:

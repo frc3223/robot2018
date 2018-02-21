@@ -29,6 +29,10 @@ class Drivetrain(Subsystem):
         self.navx = navx.AHRS.create_spi()
         self.pdp = wpilib.PowerDistributionPanel(16)
 
+        self.motor_lb.setNeutralMode(ctre.NeutralMode.Brake)
+        self.motor_rb.setNeutralMode(ctre.NeutralMode.Brake)
+        self.motor_rf.setNeutralMode(ctre.NeutralMode.Brake)
+        self.motor_lf.setNeutralMode(ctre.NeutralMode.Brake)
         self.motor_lb.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder,0,0)
         self.motor_rb.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder, 0, 0)
         self.motor_rb.selectProfileSlot(0, 0)
@@ -131,10 +135,11 @@ class Drivetrain(Subsystem):
         self.mode = "Forward"
         #The PID values with the motors for drive forward
         self.zeroEncoders()
+
         self.motor_rb.configMotionAcceleration(int(self.getEncoderAccel(5)), 0)
         self.motor_lb.configMotionAcceleration(int(self.getEncoderAccel(5)), 0)
-        self.motor_rb.configMotionCruiseVelocity(int(self.getEncoderVelocity(5)), 0)
-        self.motor_lb.configMotionCruiseVelocity(int(self.getEncoderVelocity(5)), 0)
+        self.motor_rb.configMotionCruiseVelocity(int(self.getEncoderVelocity(3.5)), 0)
+        self.motor_lb.configMotionCruiseVelocity(int(self.getEncoderVelocity(3.5)), 0)
         self.motor_rb.configNominalOutputForward(0, 0)
         self.motor_lb.configNominalOutputForward(0, 0)
         self.motor_rb.configNominalOutputReverse(0, 0)

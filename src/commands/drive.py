@@ -15,7 +15,7 @@ class Drive(wpilib.command.Command):
         self.drivetrain.mode = "Drive"
         joystick = getJoystick()
         fw = joystick.getRawAxis(1)
-        lr = joystick.getRawAxis(4)
+        lr = joystick.getRawAxis(0)
         self.drivetrain.drive.arcadeDrive(fw*.75, lr*.75)
 
     def isFinished(self):
