@@ -9,14 +9,15 @@ class ElevatorTest(Command):
         self.requires(self.elevator)
 
     def execute(self):
+        '''
         x = self.joystick.getRawAxis(1)
         if abs(x) < 0.1:
             x = 0
         self.elevator.test_drive_x(x)
         '''
-        if self.joystick.getRawButton(7):
+        if self.joystick.getRawButton(1): #A pressed
             self.elevator.test_drive_positive()
-        elif self.joystick.getRawButton(8):
+        elif self.joystick.getRawButton(2): #B pressed
             self.elevator.test_drive_negative()
         else:
-            self.elevator.off()'''
+            self.elevator.off()
