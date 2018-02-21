@@ -44,16 +44,6 @@ class Gneiss(CommandBasedRobot):
         #self.driveForward = driveForward.DriveForward(10)
         self.driveForward = automous.Test()
 
-        '''
-        self.goToPickup = commands.elevatorPickupHeight()
-        self.goToScale = commands.elevatorScaleHeight()
-        self.goToSwitch = commands.elevatorSwitchHeight()
-        self.goDown = commands.elevatorDownHeight()
-        self.pullIn = commands.grabberPullIn()
-        self.spitOut = commands.grabberSpitOut()
-        '''
-
-
     def autonomousInit(self):
         '''Called only at the beginning of autonomous mode'''
         '''if self.startSide == "l":
@@ -75,37 +65,20 @@ class Gneiss(CommandBasedRobot):
         '''Called only at the beginning of teleoperated mode'''
         #How the buttons for the xbox controller are mapped
         self.drivetrain.init_logger()
-        b = JoystickButton(self.joystick, 1) #A
-        b2 = JoystickButton(self.joystick, 2) #B
+        b = JoystickButton(self.joystick, 7) #A
+        b2 = JoystickButton(self.joystick, 8) #B
         #b.whenPressed(self.angle)
         b2.cancelWhenPressed(self.angle)
 
-        b3 = JoystickButton(self.joystick, 3) #X
-        b4 = JoystickButton(self.joystick, 4) #Y
+        #b3 = JoystickButton(self.joystick, 3) #X
+        #b4 = JoystickButton(self.joystick, 4) #Y
         #b3.whenPressed(self.driveForward)
-        b4.cancelWhenPressed(self.driveForward)
+        #b4.cancelWhenPressed(self.driveForward)
 
-        b5 = JoystickButton(self.joystick, 5) #leftbumper
-        b6 = JoystickButton(self.joystick, 6) #rightbumper
+        #b5 = JoystickButton(self.joystick, 5) #leftbumper
+        #b6 = JoystickButton(self.joystick, 6) #rightbumper
         #b5.whenPressed(self.auto)
-        b6.cancelWhenPressed(self.auto)
-
-        '''
-        pickupheight_button = JoystickButton(self.joystick, 1) #A
-        pickupheight_button.whenPressed(self.goToPickup)
-        switchheight_button = JoystickButton(self.joystick, 2)#B
-        switchheight_button.whenPressed(self.goToSwitch)
-        elevatordown_button = JoystickButton(self.joystick, 3) #X
-        elevatordown_button.whenPressed(self.goDown)
-        scaleheight_button = JoystickButton(self.joystick, 4) #Y
-        scaleheight_button.whenPressed(self.goToScale)
-        spitout_button = JoystickButton(self.joystick, 6) #Right Bumper
-        spitout_button.whenPressed(self.spitOut)
-        pullin_button = JoystickButton(self.joystick, 5) #Left Bumper
-        pullin_button.whenPressed(self.pullIn)
-
-        '''
-
+        #b6.cancelWhenPressed(self.auto)
 
 if __name__ == '__main__':
     wpilib.run(Gneiss)
