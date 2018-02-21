@@ -28,7 +28,6 @@ class Drivetrain(Subsystem):
         self.drive = wpilib.drive.DifferentialDrive(self.motor_rb, self.motor_lb)
         self.navx = navx.AHRS.create_spi()
         self.pdp = wpilib.PowerDistributionPanel(16)
-        self.pdp2 = wpilib.PowerDistributionPanel(16)
 
         self.motor_lb.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder,0,0)
         self.motor_rb.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder, 0, 0)

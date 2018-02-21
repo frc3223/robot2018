@@ -4,6 +4,7 @@ import wpilib
 
 from wpilib.command.subsystem import Subsystem
 from commands.elevator_test import ElevatorTest
+from data_logger import DataLogger
 
 
 class Elevator(Subsystem):
@@ -21,18 +22,33 @@ class Elevator(Subsystem):
         self.other_motor.follow(self.motor)
         self.zeroed = False
         self.motor.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder, 0, 0)
-        #self.motor.setSensorPhase(True)
         self.elevator_table = networktables.NetworkTables.getTable('/Elevator')
         self.motor.setSensorPhase(True)
         self.initialize_motionMagic()
+
+        self.timer = wpilib.Timer()
+        self.timer.start()
+        self.logger = None
+        self.init_logger()
+
+    def init_logger(self):
+        self.logger = DataLogger('elevator.csv')
+        self.logger.add("time", lambda: self.timer.get())
+        self.logger.add("enc_pos", lambda: self.motor.getSelectedSensorPosition(0))
+        self.logger.add("voltagep_motor", lambda: self.motor.getMotorOutputPercent())
+        self.logger.add("voltagep_othermotor", lambda: self.other_motor.getMotorOutputPercent())
+        self.logger.add("voltage", lambda: self.motor.getBusVoltage())
+        self.logger.add("current_motor", lambda: self.motor.getOutputCurrent())
+        self.logger.add("current_othermotor", lambda: self.other_motor.getOutputCurrent())
+        self.logger.add("zeroed", lambda: 1 if self.zeroed else 0)
 
     def initialize_motionMagic(self):
         self.motor.configMotionAcceleration(int(self.ftToEncoder_accel(1)), 0)
         self.motor.configMotionCruiseVelocity(int(self.ftToEncoder_vel(1)), 0)
         self.motor.configNominalOutputForward(0, 0)
         self.motor.configNominalOutputReverse(0, 0)
-        self.motor.configPeakOutputForward(0.4, 0)
-        self.motor.configPeakOutputReverse(-0.4, 0)
+        self.motor.configPeakOutputForward(1.0, 0)
+        self.motor.configPeakOutputReverse(-1.0, 0)
         self.motor.selectProfileSlot(0, 0)
         self.motor.config_kF(0, 0, 0)
         self.motor.config_kP(0, 0.018, 0)
@@ -88,3 +104,6 @@ class Elevator(Subsystem):
         self.elevator_table.putNumber("Position", position)
         self.elevator_table.putNumber("Motor Current", self.motor.getOutputCurrent())
         self.elevator_table.putNumber("Other Motor Current", self.other_motor.getOutputCurrent())
+
+        if self.logger is not None:
+            self.logger.log()

@@ -3,6 +3,7 @@ import wpilib
 import networktables
 from wpilib.command.subsystem import Subsystem
 from commands import grabber
+from data_logger import DataLogger
 
 
 class Intake(Subsystem):
@@ -13,13 +14,29 @@ class Intake(Subsystem):
         self.intake_motor_rightWheel = wpilib.VictorSP(7)
         self.intake_motor_leftWheel = wpilib.VictorSP(9)
         self.limit_switch = wpilib.DigitalOutput(0)
+        self.pdp = wpilib.PowerDistributionPanel(16)
         self.intake_table = networktables.NetworkTables.getTable('/Intake')
+
+        self.timer = wpilib.Timer()
+        self.timer.start()
+        self.logger = None
 
     def initDefaultCommand(self):
         self.setDefaultCommand(grabber.Grabber())
 
     def closeGrabber(self, x):
         self.motor_closeOpen_set(x)
+
+    def init_logger(self):
+        self.logger = DataLogger('intake.csv')
+        self.logger.add("time", lambda: self.timer.get())
+        self.logger.add("voltagep_r", lambda: self.intake_motor_rightWheel.get())
+        self.logger.add("voltagep_m", lambda: self.intake_motor_closeOpen.get())
+        self.logger.add("voltagep_l", lambda: self.intake_motor_leftWheel.get())
+        self.logger.add("voltage", lambda: self.pdp.getVoltage())
+        self.logger.add("current_r", lambda: self.pdp.getCurrent(0))
+        self.logger.add("current_m", lambda: self.pdp.getCurrent(1))
+        self.logger.add("current_l", lambda: self.pdp.getCurrent(15))
 
     def openGrabber(self):
         '''
@@ -60,3 +77,6 @@ class Intake(Subsystem):
 
     def periodic(self):
         self.intake_table.putBoolean("LimitSwitch", self.limit_switch.get())
+
+        if self.logger is not None:
+            self.logger.log()
