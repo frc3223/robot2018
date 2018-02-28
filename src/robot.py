@@ -39,7 +39,8 @@ class Gneiss(CommandBasedRobot):
         #self.angle = turnlikeistuesday.Turnlikeistuesday(90)
         self.angle = turn_profiled.TurnProfiled(90)
         self.auto = driveForward.DriveForward(10)
-        self.autoTimeBased = autoTimeBased.AutoTimeBased()
+        self.autoTimeBased = autoTimeBased.TimeBasedCenter()
+        #self.autoTimeBased = autoTimeBased.AutoTimeBased()
         '''self.elevatorZero = elevatorZero.elevatorZero()'''
 
         self.driveForward = driveForward.DriveForward(10)

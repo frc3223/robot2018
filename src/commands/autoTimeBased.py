@@ -173,6 +173,7 @@ class TimeBasedCenter(wpilib.command.CommandGroup):
         super().__init__("TimeBasedCenter")
         self.addSequential(TimeBasedForward(5))
         self.addParallel(TimeBasedElevator(5))
+        self.addSequential(IfIsRightSwitch(TimeBasedGrabber(1)))
 
 class IfIsRightSwitch(wpilib.command.ConditionalCommand):
     def __init__(self,onTrue, onFalse = None):
