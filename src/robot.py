@@ -18,7 +18,8 @@ from commands import (
     driveForward,
     turnlikeistuesday,
     automous,
-    autoTimeBased)
+    autoTimeBased,
+    autoEncoders)
 from wpilib.command import scheduler
 
 class Gneiss(CommandBasedRobot):
@@ -32,6 +33,7 @@ class Gneiss(CommandBasedRobot):
         self.startSide = "l" #starting side
         self.gamecode = "rlr"                 #wpilib.DriverStation.getGameSpecificMessage()
         self.drivetrain = Drivetrain()
+        self.drivetrain.zeroEncoders()
         self.elevator = Elevator()
         self.intake = Intake()
         self.table = networktables.NetworkTables.getTable("String")
@@ -39,7 +41,8 @@ class Gneiss(CommandBasedRobot):
         #self.angle = turnlikeistuesday.Turnlikeistuesday(90)
         self.angle = turn_profiled.TurnProfiled(90)
         self.auto = driveForward.DriveForward(10)
-        self.autoTimeBased = autoTimeBased.AutoTimeBased()
+        #self.autoTimeBased = autoTimeBased.TimeBasedStart()
+        self.autoEncoders = commands.autoEncoders.AutoEncoders(5)
         '''self.elevatorZero = elevatorZero.elevatorZero()'''
 
         self.driveForward = driveForward.DriveForward(10)
@@ -54,7 +57,7 @@ class Gneiss(CommandBasedRobot):
                 goToScaleL.goToScaleL("l").start()
             else:
                 goToSwitchL.gotoSwitchL("r").start()'''
-        self.autoTimeBased.start()
+        self.autoEncoders.start()
 
     def disabledInit(self):
         '''Called only at the beginning of disabled mode'''
@@ -62,6 +65,7 @@ class Gneiss(CommandBasedRobot):
 
     def teleopInit(self):
         '''Called only at the beginning of teleoperated mode'''
+        self.drivetrain.zeroEncoders()
         #How the buttons for the xbox controller are mapped
         self.drivetrain.init_logger()
         b = JoystickButton(self.joystick, 7) #A

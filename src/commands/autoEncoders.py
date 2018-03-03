@@ -43,16 +43,6 @@ class AutoEncoders(wpilib.command.Command):
             self.drivetrain.motor_rb.set(self.Rpower)
             self.drivetrain.motor_lb.set(self.Lpower)
 
-
-
-
-
-
-
-
-
-
-
     def isFinished(self):
         hello = 1
 
