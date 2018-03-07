@@ -42,7 +42,7 @@ class Gneiss(CommandBasedRobot):
         self.angle = turn_profiled.TurnProfiled(90)
         self.auto = driveForward.DriveForward(10)
         #self.autoTimeBased = autoTimeBased.TimeBasedStart()
-        self.autoEncoders = commands.autoEncoders.AutoEncoders(5)
+        self.autoEncoders = commands.autoEncoders.AutoEncodersTurnLeft(90)
         '''self.elevatorZero = elevatorZero.elevatorZero()'''
 
         self.driveForward = driveForward.DriveForward(10)
