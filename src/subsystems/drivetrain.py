@@ -44,6 +44,8 @@ class Drivetrain(Subsystem):
         self.rightError = networktables.NetworkTables.getTable("/TalonR/Error")
         self.motor_lb.setSensorPhase(True)
         self.motor_rb.setSensorPhase(True)
+        self.left_offset = 0
+        self.right_offset = 0
 
         self.timer = wpilib.Timer()
         self.timer.start()
@@ -73,23 +75,31 @@ class Drivetrain(Subsystem):
         self.logger.add("enc_pos_r", lambda: self.motor_rb.getSelectedSensorPosition(0))
         self.logger.add("enc_vel_l", lambda: self.motor_lb.getSelectedSensorVelocity(0))
         self.logger.add("enc_vel_r", lambda: self.motor_rb.getSelectedSensorVelocity(0))
-        self.logger.add("error_l", lambda: self.motor_lb.getClosedLoopError(0))
-        self.logger.add("error_r", lambda: self.motor_rb.getClosedLoopError(0))
-        self.logger.add("target_l", lambda: self.motor_lb.getClosedLoopTarget(0))
-        self.logger.add("target_r", lambda: self.motor_rb.getClosedLoopTarget(0))
+        #self.logger.add("error_l", lambda: self.motor_lb.getClosedLoopError(0))
+        #self.logger.add("error_r", lambda: self.motor_rb.getClosedLoopError(0))
+        #self.logger.add("target_l", lambda: self.motor_lb.getClosedLoopTarget(0))
+        #self.logger.add("target_r", lambda: self.motor_rb.getClosedLoopTarget(0))
         self.logger.add("computed_velocity", lambda: self.computed_velocity)
         self.logger.add("mode", lambda: self.mode)
         self.logger.add("voltage", lambda: self.motor_lb.getBusVoltage())
-        self.logger.add("voltagep_l", lambda: self.motor_lb.getMotorOutputPercent())
-        self.logger.add("voltagep_r", lambda: self.motor_rb.getMotorOutputPercent())
+        #self.logger.add("voltagep_l", lambda: self.motor_lb.getMotorOutputPercent())
+        #self.logger.add("voltagep_r", lambda: self.motor_rb.getMotorOutputPercent())
         self.logger.add("current_rf", lambda: self.pdp.getCurrent(0))
         self.logger.add("current_rb", lambda: self.pdp.getCurrent(1))
         self.logger.add("current_lf", lambda: self.pdp.getCurrent(15))
         self.logger.add("current_lb", lambda: self.pdp.getCurrent(13))
 
     def zeroEncoders(self):
-        self.motor_rb.setSelectedSensorPosition(0, 0, 0)
-        self.motor_lb.setSelectedSensorPosition(0, 0, 0)
+        #self.motor_rb.setSelectedSensorPosition(0, 0, 10)
+        #self.motor_lb.setSelectedSensorPosition(0, 0, 10)
+        self.right_offset = self.motor_rb.getSelectedSensorPosition(0)
+        self.left_offset = self.motor_lb.getSelectedSensorPosition(0)
+
+    def getLeftEncoder(self):
+        return self.motor_lb.getSelectedSensorPosition(0) - self.left_offset
+
+    def getRightEncoder(self):
+        return self.motor_rb.getSelectedSensorPosition(0) - self.right_offset
 
     def zeroNavx(self):
         self.navx.reset()
@@ -135,7 +145,6 @@ class Drivetrain(Subsystem):
         self.mode = "Forward"
         #The PID values with the motors for drive forward
         self.zeroEncoders()
-
         self.motor_rb.configMotionAcceleration(int(self.getEncoderAccel(5)), 0)
         self.motor_lb.configMotionAcceleration(int(self.getEncoderAccel(5)), 0)
         self.motor_rb.configMotionCruiseVelocity(int(self.getEncoderVelocity(3.5)), 0)
@@ -175,14 +184,38 @@ class Drivetrain(Subsystem):
         # tested for counterclockwise turn
 
         self.motor_rb.config_kF(0, 1.88, 0)
-        self.motor_rb.config_kP(0, 4.18, 0)
-        self.motor_rb.config_kI(0, 0.01, 0)
+        self.motor_rb.config_kP(0, 2.18, 0)
+        self.motor_rb.config_kI(0, 0.00, 0)
         self.motor_rb.config_kD(0, 450, 0)
 
-        self.motor_lb.config_kF(0, 0.88, 0)
-        self.motor_lb.config_kP(0, 3.18, 0)
-        self.motor_lb.config_kI(0, 0.01, 0)
+        self.motor_lb.config_kF(0, 1.88, 0)
+        self.motor_lb.config_kP(0, 2.18, 0)
+        self.motor_lb.config_kI(0, 0.00, 0)
         self.motor_lb.config_kD(0, 450, 0)
+
+
+    def configparameters(self, p, i, f, d, nominal_forward = 0, nominal_reverse = 0, peak_forward = 1, peak_reverse = -1 ):
+        self.motor_rb.configNominalOutputForward(nominal_forward, 0)
+        self.motor_lb.configNominalOutputForward(nominal_forward, 0)
+        self.motor_rb.configNominalOutputReverse(nominal_reverse, 0)
+        self.motor_lb.configNominalOutputReverse(nominal_reverse, 0)
+        self.motor_rb.configPeakOutputForward(peak_forward, 0)
+        self.motor_lb.configPeakOutputForward(peak_forward, 0)
+        self.motor_rb.configPeakOutputReverse(peak_reverse, 0)
+        self.motor_lb.configPeakOutputReverse(peak_reverse, 0)
+        self.motor_rb.selectProfileSlot(0, 0)
+        self.motor_lb.selectProfileSlot(0, 0)
+        # tested for counterclockwise turn
+
+        self.motor_rb.config_kF(0, f, 0)
+        self.motor_rb.config_kP(0, p, 0)
+        self.motor_rb.config_kI(0, i, 0)
+        self.motor_rb.config_kD(0, d, 0)
+
+        self.motor_lb.config_kF(0, f, 0)
+        self.motor_lb.config_kP(0, p, 0)
+        self.motor_lb.config_kI(0, i, 0)
+        self.motor_lb.config_kD(0, d, 0)
 
     def getAngle(self):
         return self.navx.getAngle()
@@ -222,7 +255,6 @@ class Drivetrain(Subsystem):
 
 
 
-
     def periodic(self):
         #Variables for the Navx
         angle = self.navx.getAngle()
@@ -230,10 +262,10 @@ class Drivetrain(Subsystem):
 
 
         #Variables used for the dashboard
-        sensorPL = self.motor_lb.getSelectedSensorPosition(0)
+        sensorPL = self.getLeftEncoder()
         self.leftEncoder_table.putNumber("Position", sensorPL)
 
-        sensorPR = self.motor_rb.getSelectedSensorPosition(0)
+        sensorPR = self.getRightEncoder()
         self.rightEncoder_table.putNumber("Position", sensorPR)
 
         sensorVL = self.motor_lb.getSelectedSensorVelocity(0)
@@ -247,6 +279,7 @@ class Drivetrain(Subsystem):
 
         self.leftError.putNumber("Voltage", voltageL)
         self.rightError.putNumber("Voltage", voltageR)
+
 
         if self.logger is not None:
             self.logger.log()

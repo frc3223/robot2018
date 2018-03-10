@@ -29,7 +29,7 @@ class Elevator(Subsystem):
         self.timer = wpilib.Timer()
         self.timer.start()
         self.logger = None
-        self.init_logger()
+        #self.init_logger()
 
     def init_logger(self):
         self.logger = DataLogger('elevator.csv')
@@ -101,6 +101,7 @@ class Elevator(Subsystem):
         return self.sensor.get()
 
     def periodic(self):
+        return
         position = self.motor.getSelectedSensorPosition(0)
         self.elevator_table.putNumber("Position", position)
         self.elevator_table.putNumber("Motor Current", self.motor.getOutputCurrent())
