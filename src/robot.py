@@ -29,6 +29,9 @@ class Gneiss(CommandBasedRobot):
     def robotInit(self):
         '''Robot-wide initialization code should go here'''
 
+        #start camera
+        wpilib.CameraServer.launch()
+
         Command.getRobot = lambda x=0: self
         #Variables that are used by the code
         self.startSide = "l" #starting side
@@ -40,10 +43,9 @@ class Gneiss(CommandBasedRobot):
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
         #self.angle = turnlikeistuesday.Turnlikeistuesday(90)
-        self.angle = turn_profiledleft.TurnProfiled(90)
-        self.auto = driveForward.DriveForward(10)
+        #self.angle = turn_profiledleft.TurnProfiledleft(90)
         #self.autoTimeBased = autoTimeBased.TimeBasedStart()
-        self.autoEncoders = commands.autoEncoders.AutoEncodersTurnLeft(90)
+        self.auto = automous.SequentialCommands()
         '''self.elevatorZero = elevatorZero.elevatorZero()'''
 
         self.driveForward = driveForward.DriveForward(10)
@@ -63,6 +65,7 @@ class Gneiss(CommandBasedRobot):
         self.table.putString("Joystick", self.joystick.getName())
 
     def autonomousInit(self):
+        self.drivetrain.zeroEncoders()
         '''Called only at the beginning of autonomous mode'''
         '''if self.startSide == "l":
             if self.gamecode[1:] == "l": #L the Letter
@@ -71,7 +74,7 @@ class Gneiss(CommandBasedRobot):
                 goToScaleL.goToScaleL("l").start()
             else:
                 goToSwitchL.gotoSwitchL("r").start()'''
-        self.autoEncoders.start()
+        self.auto.start()
 
     def disabledInit(self):
         '''Called only at the beginning of disabled mode'''
@@ -82,10 +85,10 @@ class Gneiss(CommandBasedRobot):
         self.drivetrain.zeroEncoders()
         #How the buttons for the xbox controller are mapped
         self.drivetrain.init_logger()
-        b = JoystickButton(self.joystick, 7) #A
-        b2 = JoystickButton(self.joystick, 8) #B
-        #b.whenPressed(self.angle)
-        b2.cancelWhenPressed(self.angle)
+        b = JoystickButton(self.joystick, 1) #A
+        #b2 = JoystickButton(self.joystick, 8) #B
+        b.whenPressed(self.auto)
+        #b2.cancelWhenPressed(self.angle)
 
         #b3 = JoystickButton(self.joystick, 3) #X
         #b4 = JoystickButton(self.joystick, 4) #Y
