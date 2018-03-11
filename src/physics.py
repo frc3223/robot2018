@@ -37,7 +37,7 @@ class PhysicsEngine(object):
         rb_motor = hal_data['CAN'][1]['value']
         lb_motor = hal_data['CAN'][13]['value']
         rf_motor = hal_data['CAN'][17]['value']
-        lf_motor = hal_data['CAN'][15]['value']
+        lf_motor = hal_data['CAN'][12]['value']
         
         speed, rotation = drivetrains.four_motor_drivetrain(
                 lb_motor, rb_motor, lf_motor, rf_motor, speed=10)

@@ -18,7 +18,7 @@ from commands.drive import Drive
 from commands import (
     driveForward,
     turnlikeistuesday,
-    automous,
+    autonomous,
     autoTimeBased,
     autoEncoders)
 from wpilib.command import scheduler
@@ -42,7 +42,7 @@ class Gneiss(CommandBasedRobot):
         self.intake = Intake()
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
-        self.auto = automous.SequentialCommands()
+        self.auto = autonomous.SequentialCommands()
 
         self.driveForward = driveForward.DriveForward(10)
 

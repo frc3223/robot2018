@@ -35,8 +35,8 @@ class Elevator(Subsystem):
         self.logger = DataLogger('elevator.csv')
         self.logger.add("time", lambda: self.timer.get())
         self.logger.add("enc_pos", lambda: self.motor.getSelectedSensorPosition(0))
-        self.logger.add("voltagep_motor", lambda: self.motor.getMotorOutputPercent())
-        self.logger.add("voltagep_othermotor", lambda: self.other_motor.getMotorOutputPercent())
+        #self.logger.add("voltagep_motor", lambda: self.motor.getMotorOutputPercent())
+        #self.logger.add("voltagep_othermotor", lambda: self.other_motor.getMotorOutputPercent())
         self.logger.add("voltage", lambda: self.motor.getBusVoltage())
         self.logger.add("current_motor", lambda: self.motor.getOutputCurrent())
         self.logger.add("current_othermotor", lambda: self.other_motor.getOutputCurrent())
@@ -47,7 +47,7 @@ class Elevator(Subsystem):
         self.motor.configMotionCruiseVelocity(int(self.ftToEncoder_vel(1)), 0)
         self.motor.configNominalOutputForward(0, 0)
         self.motor.configNominalOutputReverse(0, 0)
-        self.motor.configPeakOutputForward(0.8, 0)
+        self.motor.configPeakOutputForward(1.0, 0)
         self.motor.configPeakOutputReverse(-0.8, 0)
         self.motor.selectProfileSlot(0, 0)
         self.motor.config_kF(0, 0, 0)
@@ -56,6 +56,7 @@ class Elevator(Subsystem):
         self.motor.config_kD(0, 0, 0)
 
     def set_position(self, position):
+        raise Exception("zeroing, limits, and pid have not been configured yet")
         if(position > self.max_pos):
             position = self.max_pos
         if(position < self.min_pos):
@@ -73,7 +74,6 @@ class Elevator(Subsystem):
 
     def hover(self):
         self.motor.set(0.1)
-        pass
 
     def descend(self, voltage):
         pass
@@ -101,7 +101,6 @@ class Elevator(Subsystem):
         return self.sensor.get()
 
     def periodic(self):
-        return
         position = self.motor.getSelectedSensorPosition(0)
         self.elevator_table.putNumber("Position", position)
         self.elevator_table.putNumber("Motor Current", self.motor.getOutputCurrent())
