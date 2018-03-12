@@ -73,7 +73,7 @@ class Drivetrain(Subsystem):
         #self.logger.add("target_l", lambda: self.motor_lb.getClosedLoopTarget(0))
         #self.logger.add("target_r", lambda: self.motor_rb.getClosedLoopTarget(0))
         self.logger.add("computed_velocity", lambda: self.computed_velocity)
-        self.logger.add("mode", lambda: self.running_command_name)
+        self.logger.add("mode", lambda: self.running_command_name())
         self.logger.add("voltage", lambda: self.motor_lb.getBusVoltage())
         #self.logger.add("voltagep_l", lambda: self.motor_lb.getMotorOutputPercent())
         #self.logger.add("voltagep_r", lambda: self.motor_rb.getMotorOutputPercent())
@@ -90,8 +90,6 @@ class Drivetrain(Subsystem):
             return command.getName()
 
     def zeroEncoders(self):
-        self.motor_rb.setSelectedSensorPosition(0, 0, 10)
-        self.motor_lb.setSelectedSensorPosition(0, 0, 10)
         self.right_offset = self.motor_rb.getSelectedSensorPosition(0)
         self.left_offset = self.motor_lb.getSelectedSensorPosition(0)
 

@@ -42,7 +42,7 @@ class Gneiss(CommandBasedRobot):
         self.intake = Intake()
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
-        self.auto = autonomous.SequentialCommands()
+        self.auto = autonomous.SwitchCommands()
 
         self.driveForward = driveForward.DriveForward(10)
 

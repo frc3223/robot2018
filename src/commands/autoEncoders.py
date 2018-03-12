@@ -86,7 +86,7 @@ class AutoEncodersTurnLeft(wpilib.command.Command):
             self.done = True
 
     def isFinished(self):
-        if(self.done and self.drivetrain.motor_lb.getSelectedSensorVelocity(0) <= 30 and self.drivetrain.motor_rb.getSelectedSensorVelocity(0) <= 30):
+        if(self.done and abs(self.drivetrain.motor_lb.getSelectedSensorVelocity(0)) <= 30 and abs(self.drivetrain.motor_rb.getSelectedSensorVelocity(0)) <= 30):
             self.done = False
             return True
         else:
@@ -127,7 +127,7 @@ class AutoEncodersTurnRight(wpilib.command.Command):
            self.done = True
 
    def isFinished(self):
-       if (self.done and self.drivetrain.motor_lb.getSelectedSensorVelocity(0) <= 30 and self.drivetrain.motor_rb.getSelectedSensorVelocity(0) <= 30):
+       if (self.done and abs(self.drivetrain.motor_lb.getSelectedSensorVelocity(0)) <= 30 and abs(self.drivetrain.motor_rb.getSelectedSensorVelocity(0)) <= 30):
            self.done = False
            return True
        else:

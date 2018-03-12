@@ -2,6 +2,7 @@
 
 src/**/*.csv
 data/*.csv
+trajectory/*.csv
 src/tests/.pytest_cache/
 # Byte-compiled / optimized / DLL files
 __pycache__/
