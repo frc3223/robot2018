@@ -21,6 +21,8 @@ class Intake(Subsystem):
         self.timer.start()
         self.logger = None
 
+        self.init_logger()
+
     def initDefaultCommand(self):
         self.setDefaultCommand(grabber.Grabber())
 

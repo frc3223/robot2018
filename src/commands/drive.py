@@ -12,7 +12,6 @@ class Drive(wpilib.command.Command):
         self.drivetrain.motor_rb.configOpenLoopRamp(0.2, 0)
 
     def execute(self):
-         self.drivetrain.mode = "Drive"
          joystick = getJoystick()
          fw = joystick.getRawAxis(1)
          lr = joystick.getRawAxis(0)
@@ -24,7 +23,6 @@ class Drive(wpilib.command.Command):
         return False
     '''
     def janky(self):
-        self.drivetrain.mode = "Drive"
         joystick = getJoystick()
         if joystick.getPOV(0) == 90:
             self.drivetrain.motor_rb.set(0.40)

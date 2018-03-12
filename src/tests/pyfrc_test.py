@@ -4,6 +4,7 @@
 '''
 from pyfrc.tests import *
 import pytest
+from unittest.mock import patch
 import math
 from profiler import TrapezoidalProfile
 
@@ -26,106 +27,16 @@ def test_profiler():
     profiler.calculate_new_velocity(18.00, 0.02)
     assert math.isclose(profiler.current_target_v, 0.00)
 
-def test_waitforautoinput():
-    import networktables 
-    table = networktables.NetworkTables.getTable("SmartDashboard")
-    table.putBoolean("switchAttempt", True)
-    from commands.autoIn import WaitForAutoIn
 
-    command = WaitForAutoIn()
 
-    result = command.isFinished()
-
-    assert result == False
-
-    table.putBoolean("scaleAttempt", True)
-
-    result = command.isFinished()
-
-    assert result == False
-
-    table.putString("autonomousMode", "tacos")
-
-    result = command.isFinished()
-
-    assert result == True
-
-@pytest.mark.parametrize("nt_value, expected", [
-    ("tacos", False),
-    ("Middle", True),
-    (None, False),
-])
-def test_IfIsMiddlePos(nt_value, expected):
-    from commands.autoIn import IfIsMiddlePos
+def test_drivetrain_nt():
     import networktables
-    table = networktables.NetworkTables.getTable("SmartDashboard")
-    table.putString("autonomousMode", nt_value)
-    command = IfIsMiddlePos(None, None)
+    from robot import Gneiss
 
-    result = command.condition()
+    robot = Gneiss()
+    robot.robotInit()
+    drivetrain = robot.drivetrain
 
-    assert result == expected
+    drivetrain.periodic()
 
-@pytest.mark.parametrize("nt_value, expected", [
-    ("tacos", False),
-    ("Left", True),
-    (None, False),
-])
-def test_IfIsLeftPos(nt_value, expected):
-    from commands.autoIn import IfIsLeftPos
-    import networktables
-    table = networktables.NetworkTables.getTable("SmartDashboard")
-    table.putString("autonomousMode", nt_value)
-    command = IfIsLeftPos(None, None)
-
-    result = command.condition()
-
-    assert result == expected
-
-@pytest.mark.parametrize("nt_value, expected", [
-    ("tacos", False),
-    ("Right", True),
-    (None, False),
-])
-def test_IfIsRightPos(nt_value, expected):
-    from commands.autoIn import IfIsRightPos
-    import networktables
-    table = networktables.NetworkTables.getTable("SmartDashboard")
-    table.putString("autonomousMode", nt_value)
-    command = IfIsRightPos(None, None)
-
-    result = command.condition()
-
-    assert result == expected
-
-@pytest.mark.parametrize("nt_value, expected", [
-    (False, False),
-    (True, True),
-    (None, False),
-])
-def test_IfIsSwitch(nt_value, expected):
-    from commands.autoIn import IfSwitch
-    import networktables
-    table = networktables.NetworkTables.getTable("SmartDashboard")
-    table.putBoolean("switchAttempt", nt_value)
-    command = IfSwitch(None, None)
-
-    result = command.condition()
-
-    assert result == expected
-
-@pytest.mark.parametrize("nt_value, expected", [
-    (False, False),
-    (True, True),
-    (None, False),
-])
-def test_IfIsScale(nt_value, expected):
-    from commands.autoIn import IfScale
-    import networktables
-    table = networktables.NetworkTables.getTable("SmartDashboard")
-    table.putBoolean("scaleAttempt", nt_value)
-    command = IfScale(None, None)
-
-    result = command.condition()
-
-    assert result == expected
+    assert networktables.NetworkTables.getTable("/Drivetrain/Left").getNumber("Position", None) == 0.0

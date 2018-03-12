@@ -17,7 +17,7 @@ class TurnProfiledleft(wpilib.command.Command):
 
     def initialize(self):
         self.drivetrain.zeroNavx()
-        self.drivetrain.configparameters(p = 2.28, f = 1.88, i = 0, d = 450)
+        self.drivetrain.config_parameters(p = 2.28, f = 1.88, i = 0, d = 450)
         self.timer.start()
 
     def execute(self):

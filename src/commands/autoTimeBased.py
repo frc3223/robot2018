@@ -1,7 +1,9 @@
 import wpilib
+import wpilib.command
 import wpilib.drive
 import networktables
 import commands
+import commands.auto_conditions
 
 class AutoTimeBased(wpilib.command.Command):
     def __init__(self):
@@ -60,6 +62,7 @@ class AutoTimeBased(wpilib.command.Command):
         self.drivetrain.off()
         self.time.stop()
 
+
 class TimeBasedForward(wpilib.command.Command):
     def __init__(self,time):
         super().__init__("TimeBasedForward")
@@ -68,7 +71,7 @@ class TimeBasedForward(wpilib.command.Command):
         self.drivetrain = self.getRobot().drivetrain
         self.requires(self.drivetrain)
 
-    def  initalize(self):
+    def  initialize(self):
         self.timer.start()
 
     def motorset(self, power):
@@ -95,7 +98,7 @@ class TimeBasedTurn(wpilib.command.Command):
         self.drivetrain = self.getRobot().drivetrain
         self.requires(self.drivetrain)
 
-    def initalize(self):
+    def initialize(self):
         self.timer.start()
 
     def motorset(self, power):
@@ -114,50 +117,31 @@ class TimeBasedTurn(wpilib.command.Command):
         self.timer.stop()
 
 
-class TimeBasedGrabber(wpilib.command.Command):
+class TimeBasedGrabber(wpilib.command.TimedCommand):
     def __init__(self, time):
-        super().__init__("TimeBasedGrabber")
-        self.time = time
-        self.timer = wpilib.Timer()
+        super().__init__("TimeBasedGrabber", time)
         self.intake = self.getRobot().intake
         self.requires(self.intake)
-
-    def initalize(self):
-        self.timer.start()
 
     def execute(self):
         self.intake.open2Grabber()
 
-    def isFinished(self):
-        if self.timer.get() >= self.time:
-            return True
-
     def end(self):
-        self.elevator.off()
-        self.timer.stop()
+        self.intake.grabberOff()
 
 
-class TimeBasedElevator(wpilib.command.Command):
+class TimeBasedElevator(wpilib.command.TimedCommand):
     def __init__(self, time):
-        super().__init__("TimeBasedElevator")
-        self.time = time
-        self.timer = wpilib.Timer()
+        super().__init__("TimeBasedElevator", time)
         self.elevator = self.getRobot().elevator
         self.requires(self.elevator)
-
-    def initalize(self):
-        self.timer.start()
 
     def execute(self):
         self.elevator.ascend(0.3)
 
-    def isFinished(self):
-        if self.timer.get() >= self.time:
-            return True
-
     def end(self):
-        self.elevator.off()
-        self.timer.stop()
+        self.elevator.hover()
+
 
 class TimeBasedStart(wpilib.command.CommandGroup):
     def __init__(self):
@@ -173,23 +157,4 @@ class TimeBasedCenter(wpilib.command.CommandGroup):
         super().__init__("TimeBasedCenter")
         self.addSequential(TimeBasedForward(5))
         self.addParallel(TimeBasedElevator(5))
-        self.addSequential(IfIsRightSwitch(TimeBasedGrabber(1)))
-
-class IfIsRightSwitch(wpilib.command.ConditionalCommand):
-    def __init__(self,onTrue, onFalse = None):
-        super().__init__("IfIsRightSwitch",onTrue,onFalse)
-
-    def condition(self):
-        gamecode = wpilib.DriverStation.getInstance().getGameSpecificMessage()
-        if gamecode is None:
-            return False
-        if len(gamecode) != 3:
-            return False
-        if gamecode[0] == "r":
-            return True
-        return False
-
-
-
-
-
+        self.addSequential(commands.auto_conditions.IfIsMiddlePosRightSwitch(TimeBasedGrabber(1)))

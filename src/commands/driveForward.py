@@ -1,26 +1,24 @@
-import wpilib.command
-import ctre
+from wpilib.command import Command
 
-
-class DriveForward(wpilib.command.Command):
+class DriveForward(Command):
     def __init__(self, position):
         super().__init__("DriveForward")
-        self.requires(self.getRobot().drivetrain)
         self.drivetrain = self.getRobot().drivetrain
-        self.position = position
+        self.requires(self.drivetrain)
+        self.position_ft = position
 
     def initialize(self):
-       self.drivetrain.initilize_driveForward()
+       self.drivetrain.initialize_driveForward()
 
     def execute(self):
-        self.drivetrain.execute_driveforward(self.position, -self.position)
+        self.drivetrain.execute_driveforward(self.position_ft, -self.position_ft)
 
     def isFinished(self):
-        if self.drivetrain.isFinished_driveforward(self.position):
+        if self.drivetrain.isFinished_driveforward(self.position_ft):
             return True
 
     def end(self):
-        self.drivetrain.end_driveforward()
+        self.drivetrain.off()
 
 
 
