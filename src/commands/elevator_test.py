@@ -9,12 +9,6 @@ class ElevatorTest(Command):
         self.requires(self.elevator)
 
     def execute(self):
-        '''
-        x = self.joystick.getRawAxis(1)
-        if abs(x) < 0.1:
-            x = 0
-        self.elevator.test_drive_x(x)
-        '''
         if self.joystick.getPOV(0) == 0: #Up on D-pad pressed
             self.elevator.test_drive_positive()
         elif self.joystick.getPOV(0) == 180: #Down on D-pad pressed

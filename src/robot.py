@@ -30,7 +30,7 @@ class Gneiss(CommandBasedRobot):
         '''Robot-wide initialization code should go here'''
 
         #start camera
-        wpilib.CameraServer.launch()
+        wpilib.CameraServer.launch('vision.py:main')
 
         Command.getRobot = lambda x=0: self
         #Variables that are used by the code

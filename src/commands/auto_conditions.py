@@ -63,16 +63,25 @@ class IfScale(wpilib.command.ConditionalCommand):
 
 
 class IfIsRightPosRightSwitch(wpilib.command.ConditionalCommand):
+    def __init__(self, onTrue, onFalse):
+        super().__init__('IfIsRightPosRightSwitch', onTrue, onFalse)
+
     def condition(self):
         return should_attempt_switch() and is_right_position() and is_right_switch()
 
 
 class IfIsMiddlePosRightSwitch(wpilib.command.ConditionalCommand):
+    def __init__(self, onTrue, onFalse):
+        super().__init__('IfIsMiddlePosRightSwitch', onTrue, onFalse)
+
     def condition(self):
         return should_attempt_switch() and is_middle_position() and is_right_switch()
 
 
 class IfIsLeftPosLeftSwitch(wpilib.command.ConditionalCommand):
+    def __init__(self, onTrue, onFalse):
+        super().__init__('IfIsLeftPosLeftSwitch', onTrue, onFalse)
+
     def condition(self):
         return should_attempt_switch() and is_left_position() and is_left_switch()
 
