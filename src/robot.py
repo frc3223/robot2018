@@ -23,6 +23,9 @@ from commands import (
     autoEncoders)
 from wpilib.command import scheduler
 
+from commands.autoTimeBased import TimeBasedElevator
+
+
 class Gneiss(CommandBasedRobot):
     '''Main robot class'''
 
@@ -30,7 +33,7 @@ class Gneiss(CommandBasedRobot):
         '''Robot-wide initialization code should go here'''
 
         #start camera
-        wpilib.CameraServer.launch('vision.py:main')
+        wpilib.CameraServer.launch()
 
         Command.getRobot = lambda x=0: self
         #Variables that are used by the code
@@ -43,6 +46,7 @@ class Gneiss(CommandBasedRobot):
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
         self.auto = autonomous.SwitchCommands()
+
 
         self.driveForward = driveForward.DriveForward(10)
 
@@ -66,25 +70,7 @@ class Gneiss(CommandBasedRobot):
         '''Called only at the beginning of disabled mode'''
         pass
 
-    def teleopInit(self):
-        '''Called only at the beginning of teleoperated mode'''
-        self.drivetrain.zeroEncoders()
-        #How the buttons for the xbox controller are mapped
-        self.drivetrain.init_logger()
-        b = JoystickButton(self.joystick, 1) #A
-        #b2 = JoystickButton(self.joystick, 8) #B
-        b.whenPressed(self.auto)
-        #b2.cancelWhenPressed(self.angle)
 
-        #b3 = JoystickButton(self.joystick, 3) #X
-        #b4 = JoystickButton(self.joystick, 4) #Y
-        #b3.whenPressed(self.driveForward)
-        #b4.cancelWhenPressed(self.driveForward)
-
-        #b5 = JoystickButton(self.joystick, 5) #leftbumper
-        #b6 = JoystickButton(self.joystick, 6) #rightbumper
-        #b5.whenPressed(self.auto)
-        #b6.cancelWhenPressed(self.auto)
 
 if __name__ == '__main__':
     wpilib.run(Gneiss)

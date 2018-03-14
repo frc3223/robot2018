@@ -11,8 +11,8 @@ class Intake(Subsystem):
     def __init__(self):
         super().__init__('Intake')
         self.intake_motor_closeOpen = wpilib.VictorSP(8)
-        self.intake_motor_rightWheel = wpilib.VictorSP(7)
-        self.intake_motor_leftWheel = wpilib.VictorSP(9)
+        self.intake_motor_rightWheel = wpilib.VictorSP(9)
+        self.intake_motor_leftWheel = wpilib.VictorSP(7)
         self.limit_switch = wpilib.DigitalOutput(0)
         self.pdp = wpilib.PowerDistributionPanel(16)
         self.intake_table = networktables.NetworkTables.getTable('/Intake')

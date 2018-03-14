@@ -68,7 +68,7 @@ class AutoEncodersTurnLeft(wpilib.command.Command):
         self.drivetrain.zeroEncoders()
 
     def execute(self):
-        self.encoderVal = self.degrees * 14.5 - 710 #Destination in feet converted to encoder ticks subracted by the error in encoder ticks to stop.
+        self.encoderVal = self.degrees * 14.5 - 310 #Destination in feet converted to encoder ticks subracted by the error in encoder ticks to stop.
         self.encoderR = abs(self.drivetrain.getRightEncoder())
         self.encoderL = abs(self.drivetrain.getLeftEncoder())
         self.encoderDiff = self.encoderR - self.encoderL
@@ -109,7 +109,7 @@ class AutoEncodersTurnRight(wpilib.command.Command):
         self.drivetrain.zeroEncoders()
 
    def execute(self):
-       self.encoderVal = self.degrees * 14.5 - 710  # Destination in feet converted to encoder ticks subracted by the error in encoder ticks to stop.
+       self.encoderVal = self.degrees * 14.5 - 310  # Destination in feet converted to encoder ticks subracted by the error in encoder ticks to stop.
        self.encoderR = abs(self.drivetrain.getRightEncoder())
        self.encoderL = abs(self.drivetrain.getLeftEncoder())
        self.encoderDiff = self.encoderR - self.encoderL

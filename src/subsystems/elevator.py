@@ -25,11 +25,12 @@ class Elevator(Subsystem):
         self.elevator_table = networktables.NetworkTables.getTable('/Elevator')
         self.motor.setSensorPhase(True)
         self.initialize_motionMagic()
-
+        self.fan = wpilib.PWM(1)
         self.timer = wpilib.Timer()
         self.timer.start()
         self.logger = None
-        #self.init_logger()
+        self.init_logger()
+
 
     def init_logger(self):
         self.logger = DataLogger('elevator.csv')
@@ -74,6 +75,7 @@ class Elevator(Subsystem):
 
     def hover(self):
         self.motor.set(0.1)
+        self.fan.setSpeed(1.0)
 
     def descend(self, voltage):
         pass
@@ -88,7 +90,7 @@ class Elevator(Subsystem):
         self.motor.set(0.5)
 
     def test_drive_negative(self):
-        self.motor.set(-0.1)
+        self.motor.set(-0.3)
 
     def off(self):
         self.motor.stopMotor()

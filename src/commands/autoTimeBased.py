@@ -79,7 +79,7 @@ class TimeBasedForward(wpilib.command.Command):
             self.drivetrain.motor_rb.set(-power)
 
     def execute(self):
-        self.motorset(0.2)
+        self.motorset(0.3)
 
     def isFinished(self):
         if self.timer.get() >= self.time:
@@ -137,7 +137,7 @@ class TimeBasedElevator(wpilib.command.TimedCommand):
         self.requires(self.elevator)
 
     def execute(self):
-        self.elevator.ascend(0.3)
+        self.elevator.ascend(0.4)
 
     def end(self):
         self.elevator.hover()
