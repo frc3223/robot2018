@@ -22,6 +22,7 @@ class Elevator(Subsystem):
         self.other_motor.follow(self.motor)
         self.zeroed = False
         self.motor.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder, 0, 0)
+        self.motor.configOpenLoopRamp(0, 0)
         self.elevator_table = networktables.NetworkTables.getTable('/Elevator')
         self.motor.setSensorPhase(True)
         self.initialize_motionMagic()
@@ -87,10 +88,10 @@ class Elevator(Subsystem):
         self.motor.set(x)
 
     def test_drive_positive(self):
-        self.motor.set(0.5)
+        self.motor.set(0.8)
 
     def test_drive_negative(self):
-        self.motor.set(-0.3)
+        self.motor.set(-0.6)
 
     def off(self):
         self.motor.stopMotor()

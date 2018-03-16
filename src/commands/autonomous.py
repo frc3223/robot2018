@@ -27,7 +27,7 @@ class SwitchCommands(wpilib.command.CommandGroup):
                     RightPosRightSwitchAuto(),
                     IfIsLeftPosLeftSwitch(
                         LeftPosLeftSwitchAuto(),
-                        AutoEncoders(11)
+                        Parallel(TimeBasedForward(4), TimeBasedElevator(2))
                     )
                 )))
 
@@ -36,7 +36,7 @@ class MiddlePosRightSwitchAuto(wpilib.command.CommandGroup):
     def __init__(self):
         super().__init__()
         self.addSequential(Parallel(
-            AutoEncoders(11),
+            TimeBasedForward(5),
             TimeBasedElevator(2),
         ))
         self.addSequential(TimeBasedGrabber(0.5))
