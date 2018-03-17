@@ -57,8 +57,8 @@ class Intake(Subsystem):
         self.motor_closeOpen_set(0)
 
     def cubeOut(self):
-        self.intake_motor_rightWheel.set(1)
-        self.intake_motor_leftWheel.set(-1)
+        self.intake_motor_rightWheel.set(0.5)
+        self.intake_motor_leftWheel.set(-0.5)
 
     def cubeIn(self):
         self.intake_motor_rightWheel.set(-1)

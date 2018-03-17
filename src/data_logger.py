@@ -1,6 +1,7 @@
 import csv
 import os.path
 from collections import OrderedDict
+import time
 
 import wpilib
 
@@ -9,7 +10,7 @@ class DataLogger:
         self.data_getters = OrderedDict()
         filepath = os.path.join('/home/lvuser/', fnom)
         if wpilib.RobotBase.isSimulation():
-            filepath = os.path.join('.', fnom)
+            filepath = os.path.join('.', str(int(time.time())) + fnom)
         self.writer = csv.writer(open(filepath, 'w'))
         self.header_logged = False
 
@@ -17,6 +18,8 @@ class DataLogger:
         self.data_getters[name] = getter
 
     def log(self):
+        if wpilib.DriverStation.getInstance().isDisabled():
+            return
         if not self.header_logged:
             self.log_header()
         row = []

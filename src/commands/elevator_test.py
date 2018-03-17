@@ -9,6 +9,7 @@ class ElevatorTest(Command):
         self.joystick = getJoystick()
         self.requires(self.elevator)
 
+
     def execute(self):
         isDisabled = wpilib.DriverStation.getInstance().isDisabled()
         if self.joystick.getPOV(0) == 0: #Up on D-pad pressed
