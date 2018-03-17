@@ -87,8 +87,12 @@ class IfIsLeftPosLeftSwitch(wpilib.command.ConditionalCommand):
 
 
 class WaitForAutoIn(wpilib.command.Command):
+    def __init__(self):
+        super().__init__("WaitForAutoIn", 5)
 
     def isFinished(self):
+        if self.isTimedOut():
+            return True
         table = networktables.NetworkTables.getTable("SmartDashboard")
         check_scale = table.getBoolean("scaleAttempt", None)
         check_switch = table.getBoolean("switchAttempt", None)
@@ -99,9 +103,11 @@ class WaitForAutoIn(wpilib.command.Command):
 
 
 class WaitForGamecode(wpilib.command.Command):
+    def __init__(self):
+        super().__init__("WaitForGamecode", 5)
 
     def isFinished(self):
-        return len(get_gamecode()) == 3
+        return len(get_gamecode()) == 3 or self.isTimedOut()
 
 
 class Parallel(wpilib.command.CommandGroup):

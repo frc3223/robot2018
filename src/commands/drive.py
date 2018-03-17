@@ -15,7 +15,7 @@ class Drive(wpilib.command.Command):
          joystick = getJoystick()
          fw = joystick.getRawAxis(1)
          lr = joystick.getRawAxis(0)
-         self.drivetrain.drive.arcadeDrive(fw*.75, lr*.65)
+         self.drivetrain.drive.arcadeDrive(fw*.75, lr*.85)
         #self.janky()
 
 
