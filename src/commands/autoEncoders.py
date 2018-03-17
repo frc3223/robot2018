@@ -132,3 +132,36 @@ class AutoEncodersTurnRight(wpilib.command.Command):
            return True
        else:
            return False
+
+
+class ElevatorPosition(wpilib.command.Command):
+    def __init__(self, name, position):
+        super().__init__(name)
+        self.elevator = self.getRobot().elevator
+        self.requires(self.elevator)
+        self.position = position
+        self.diff = 500
+
+    def execute(self):
+        if self.elevator.zeroed:
+            if self.elevator.getEncoderPosition() < self.position - self.diff:
+                self.elevator.test_drive_positive()
+            elif self.elevator.getEncoderPosition() > self.position + self.diff:
+                self.elevator.test_drive_negative()
+
+    def isFinished(self):
+        if not self.elevator.zeroed:
+            return True
+        return abs(self.elevator.getEncoderPosition() - self.position) < self.diff
+
+    def end(self):
+        self.elevator.hover()
+
+class ElevatorSwitch(ElevatorPosition):
+    def __init__(self):
+        super().__init__("ElevatorSwitch", 9000)
+
+
+class ElevatorIntake(ElevatorPosition):
+    def __init__(self):
+        super().__init__("ElevatorIntake", 1500)

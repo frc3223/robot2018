@@ -100,6 +100,10 @@ class Elevator(Subsystem):
         self.zeroed = True
         self.motor.setSelectedSensorPosition(0, 0, 0)
 
+    def getEncoderPosition(self):
+        return -self.motor.getSelectedSensorPosition(0)
+
+
     def getSensor(self):
         return self.sensor.get()
 
@@ -108,6 +112,7 @@ class Elevator(Subsystem):
         self.elevator_table.putNumber("Position", position)
         self.elevator_table.putNumber("Motor Current", self.motor.getOutputCurrent())
         self.elevator_table.putNumber("Other Motor Current", self.other_motor.getOutputCurrent())
+        self.elevator_table.putBoolean("Zeroed", self.zeroed)
 
         if self.logger is not None:
             self.logger.log()

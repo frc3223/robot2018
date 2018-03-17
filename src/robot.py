@@ -6,6 +6,8 @@ import networktables
 import commands
 from robotpy_ext.common_drivers import navx
 from commandbased import CommandBasedRobot
+
+from commands.autoEncoders import ElevatorSwitch, ElevatorIntake
 from commands import turn_profiledright
 from commands import turn_profiledleft
 from wpilib.buttons.joystickbutton import JoystickButton
@@ -46,15 +48,28 @@ class Gneiss(CommandBasedRobot):
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
         self.auto = autonomous.SwitchCommands()
+        self.elevatorSwitch = ElevatorSwitch()
+        self.elevatorIntake = ElevatorIntake()
 
 
         self.driveForward = driveForward.DriveForward(10)
+
+    def teleopInit(self):
+        buttonA = JoystickButton(self.joystick, 1)
+        buttonA.whenPressed(self.elevatorSwitch)
+        buttonY = JoystickButton(self.joystick, 4)
+        buttonY.cancelWhenPressed(self.elevatorSwitch)
+        buttonY.cancelWhenPressed(self.elevatorIntake)
+
+        buttonB = JoystickButton(self.joystick, 2)
+        buttonB.whenPressed(self.elevatorIntake)
 
     def teleopPeriodic(self):
         super().teleopPeriodic()
         self.table.putString("Joystick", self.joystick.getName())
 
     def autonomousInit(self):
+        self.elevator.zeroEncoder()
         self.drivetrain.zeroEncoders()
         '''Called only at the beginning of autonomous mode'''
         '''if self.startSide == "l":
@@ -64,7 +79,7 @@ class Gneiss(CommandBasedRobot):
                 goToScaleL.goToScaleL("l").start()
             else:
                 goToSwitchL.gotoSwitchL("r").start()'''
-        self.auto.start()
+        self.elevatorSwitch.start()
 
     def disabledInit(self):
         '''Called only at the beginning of disabled mode'''
