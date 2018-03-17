@@ -103,6 +103,8 @@ class Elevator(Subsystem):
     def getEncoderPosition(self):
         return -self.motor.getSelectedSensorPosition(0)
 
+    def getCurrent(self):
+        return self.motor.getOutputCurrent()
 
     def getSensor(self):
         return self.sensor.get()

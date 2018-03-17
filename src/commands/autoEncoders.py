@@ -3,6 +3,7 @@ import wpilib.command
 import wpilib.drive
 import networktables
 import commands
+from oi import getJoystick
 
 
 class AutoEncoders(wpilib.command.Command):
@@ -137,6 +138,7 @@ class AutoEncodersTurnRight(wpilib.command.Command):
 class ElevatorPosition(wpilib.command.Command):
     def __init__(self, name, position):
         super().__init__(name)
+        self.joystick = getJoystick()
         self.elevator = self.getRobot().elevator
         self.requires(self.elevator)
         self.position = position
@@ -150,12 +152,22 @@ class ElevatorPosition(wpilib.command.Command):
                 self.elevator.test_drive_negative()
 
     def isFinished(self):
+        if self.joystick.getPOV(0) in (0,180):
+            return True
         if not self.elevator.zeroed:
             return True
         return abs(self.elevator.getEncoderPosition() - self.position) < self.diff
 
     def end(self):
         self.elevator.hover()
+
+class ElevatorScale(ElevatorPosition):
+    def __init__(self):
+        super().__init__("ElevatorScale",35000)
+    def isFinished(self):
+        if self.elevator.getCurrent() >= 60:
+            return True
+        return super().isFinished()
 
 class ElevatorSwitch(ElevatorPosition):
     def __init__(self):
