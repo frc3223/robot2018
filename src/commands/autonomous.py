@@ -38,6 +38,7 @@ class MiddlePosRightSwitchAuto(wpilib.command.CommandGroup):
         self.addSequential(Parallel(
             TimeBasedForward(4),
             ElevatorSwitch(),
+
         ))
         self.addSequential(TimeBasedGrabber(0.5))
 
