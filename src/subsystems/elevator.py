@@ -87,11 +87,17 @@ class Elevator(Subsystem):
     def test_drive_x(self, x):
         self.motor.set(x)
 
+    def test_drive_positive_light(self):
+        self.motor.set(0.6)
+
     def test_drive_positive(self):
         self.motor.set(0.8)
 
     def test_drive_negative(self):
         self.motor.set(-0.6)
+
+    def test_drive_negative_light(self):
+        self.motor.set(-0.4)
 
     def off(self):
         self.motor.stopMotor()

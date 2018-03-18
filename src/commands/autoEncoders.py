@@ -75,8 +75,8 @@ class AutoEncodersTurnLeft(wpilib.command.Command):
         self.encoderDiff = self.encoderR - self.encoderL
 
         if self.encoderR < self.encoderVal:
-            self.Rpower = -0.4
-            self.Lpower = -0.4
+            self.Rpower = -0.7
+            self.Lpower = -0.7
             self.drivetrain.motor_rb.set(self.Rpower)
             self.drivetrain.motor_lb.set(self.Lpower)
         elif self.encoderR >= self.encoderVal:
@@ -116,8 +116,8 @@ class AutoEncodersTurnRight(wpilib.command.Command):
        self.encoderDiff = self.encoderR - self.encoderL
 
        if self.encoderR < self.encoderVal:
-           self.Rpower = 0.4
-           self.Lpower = 0.4
+           self.Rpower = 0.7
+           self.Lpower = 0.7
            self.drivetrain.motor_rb.set(self.Rpower)
            self.drivetrain.motor_lb.set(self.Lpower)
        elif self.encoderR >= self.encoderVal:
@@ -163,9 +163,9 @@ class ElevatorPosition(wpilib.command.Command):
 
 class ElevatorScale(ElevatorPosition):
     def __init__(self):
-        super().__init__("ElevatorScale",35000)
+        super().__init__("ElevatorScale",31000)
     def isFinished(self):
-        if self.elevator.getCurrent() >= 60:
+        if self.elevator.getCurrent() >= 40:
             return True
         return super().isFinished()
 

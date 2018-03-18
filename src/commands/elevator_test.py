@@ -13,9 +13,9 @@ class ElevatorTest(Command):
     def execute(self):
         isDisabled = wpilib.DriverStation.getInstance().isDisabled()
         if self.joystick.getPOV(0) == 0: #Up on D-pad pressed
-            self.elevator.test_drive_positive()
+            self.elevator.test_drive_positive_light()
         elif self.joystick.getPOV(0) == 180: #Down on D-pad pressed
-            self.elevator.test_drive_negative()
+            self.elevator.test_drive_negative_light()
         elif isDisabled:
             self.elevator.off()
         else:
