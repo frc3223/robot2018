@@ -1,6 +1,7 @@
 .deploy_cfg
 
 src/**/*.csv
+logs/*.csv
 data/*.csv
 trajectory/*.csv
 src/tests/.pytest_cache/

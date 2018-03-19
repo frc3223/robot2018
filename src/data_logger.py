@@ -10,7 +10,7 @@ class DataLogger:
         self.data_getters = OrderedDict()
         filepath = os.path.join('/home/lvuser/', fnom)
         if wpilib.RobotBase.isSimulation():
-            filepath = os.path.join('.', str(int(time.time())) + fnom)
+            filepath = os.path.join('../../logs', str(int(time.time())) + fnom)
         self.writer = csv.writer(open(filepath, 'w'))
         self.header_logged = False
 

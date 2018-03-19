@@ -87,11 +87,17 @@ class Elevator(Subsystem):
     def test_drive_x(self, x):
         self.motor.set(x)
 
+    def test_drive_positive_light(self):
+        self.motor.set(0.6)
+
     def test_drive_positive(self):
         self.motor.set(0.8)
 
     def test_drive_negative(self):
         self.motor.set(-0.6)
+
+    def test_drive_negative_light(self):
+        self.motor.set(-0.4)
 
     def off(self):
         self.motor.stopMotor()
@@ -99,6 +105,12 @@ class Elevator(Subsystem):
     def zeroEncoder(self):
         self.zeroed = True
         self.motor.setSelectedSensorPosition(0, 0, 0)
+
+    def getEncoderPosition(self):
+        return -self.motor.getSelectedSensorPosition(0)
+
+    def getCurrent(self):
+        return self.motor.getOutputCurrent()
 
     def getSensor(self):
         return self.sensor.get()
@@ -108,6 +120,7 @@ class Elevator(Subsystem):
         self.elevator_table.putNumber("Position", position)
         self.elevator_table.putNumber("Motor Current", self.motor.getOutputCurrent())
         self.elevator_table.putNumber("Other Motor Current", self.other_motor.getOutputCurrent())
+        self.elevator_table.putBoolean("Zeroed", self.zeroed)
 
         if self.logger is not None:
             self.logger.log()

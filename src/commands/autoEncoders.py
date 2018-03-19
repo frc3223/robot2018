@@ -3,6 +3,7 @@ import wpilib.command
 import wpilib.drive
 import networktables
 import commands
+from oi import getJoystick
 
 
 class AutoEncoders(wpilib.command.Command):
@@ -74,8 +75,8 @@ class AutoEncodersTurnLeft(wpilib.command.Command):
         self.encoderDiff = self.encoderR - self.encoderL
 
         if self.encoderR < self.encoderVal:
-            self.Rpower = -0.4
-            self.Lpower = -0.4
+            self.Rpower = -0.7
+            self.Lpower = -0.7
             self.drivetrain.motor_rb.set(self.Rpower)
             self.drivetrain.motor_lb.set(self.Lpower)
         elif self.encoderR >= self.encoderVal:
@@ -115,8 +116,8 @@ class AutoEncodersTurnRight(wpilib.command.Command):
        self.encoderDiff = self.encoderR - self.encoderL
 
        if self.encoderR < self.encoderVal:
-           self.Rpower = 0.4
-           self.Lpower = 0.4
+           self.Rpower = 0.7
+           self.Lpower = 0.7
            self.drivetrain.motor_rb.set(self.Rpower)
            self.drivetrain.motor_lb.set(self.Lpower)
        elif self.encoderR >= self.encoderVal:
@@ -132,3 +133,47 @@ class AutoEncodersTurnRight(wpilib.command.Command):
            return True
        else:
            return False
+
+
+class ElevatorPosition(wpilib.command.Command):
+    def __init__(self, name, position):
+        super().__init__(name)
+        self.joystick = getJoystick()
+        self.elevator = self.getRobot().elevator
+        self.requires(self.elevator)
+        self.position = position
+        self.diff = 500
+
+    def execute(self):
+        if self.elevator.zeroed:
+            if self.elevator.getEncoderPosition() < self.position - self.diff:
+                self.elevator.test_drive_positive()
+            elif self.elevator.getEncoderPosition() > self.position + self.diff:
+                self.elevator.test_drive_negative()
+
+    def isFinished(self):
+        if self.joystick.getPOV(0) in (0,180):
+            return True
+        if not self.elevator.zeroed:
+            return True
+        return abs(self.elevator.getEncoderPosition() - self.position) < self.diff
+
+    def end(self):
+        self.elevator.hover()
+
+class ElevatorScale(ElevatorPosition):
+    def __init__(self):
+        super().__init__("ElevatorScale",31000)
+    def isFinished(self):
+        if self.elevator.getCurrent() >= 40:
+            return True
+        return super().isFinished()
+
+class ElevatorSwitch(ElevatorPosition):
+    def __init__(self):
+        super().__init__("ElevatorSwitch", 9000)
+
+
+class ElevatorIntake(ElevatorPosition):
+    def __init__(self):
+        super().__init__("ElevatorIntake", 1500)
