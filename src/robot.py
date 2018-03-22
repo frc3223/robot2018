@@ -5,7 +5,7 @@ import networktables
 from commandbased import CommandBasedRobot
 
 from commands.autoEncoders import (
-    ElevatorSwitch, ElevatorIntake, ElevatorScale
+    ElevatorSwitch, ElevatorIntake, ElevatorScale, AutoEncoders
 )
 from wpilib.buttons.joystickbutton import JoystickButton
 
@@ -34,7 +34,8 @@ class Gneiss(CommandBasedRobot):
         self.intake = Intake()
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
-        self.auto = autonomous.SwitchCommands()
+        #self.auto = autonomous.SwitchCommands()
+        self.auto = AutoEncoders(10)
         self.elevatorSwitch = ElevatorSwitch()
         self.elevatorScale = ElevatorScale()
         self.elevatorIntake = ElevatorIntake()
@@ -43,6 +44,8 @@ class Gneiss(CommandBasedRobot):
         self.driveForward = driveForward.DriveForward(10)
 
     def teleopInit(self):
+        self.drivetrain.zeroEncoders()
+        self.drivetrain.zeroNavx()
         buttonA = JoystickButton(self.joystick, 1)
         buttonB = JoystickButton(self.joystick, 2)
         buttonY = JoystickButton(self.joystick, 4)

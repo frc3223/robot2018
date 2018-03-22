@@ -70,12 +70,37 @@ class IfIsRightPosRightSwitch(wpilib.command.ConditionalCommand):
         return should_attempt_switch() and is_right_position() and is_right_switch()
 
 
+class IfIsRightPosLeftSwitch(wpilib.command.ConditionalCommand):
+    def __init__(self, onTrue, onFalse):
+        super().__init__('IfisRIghtposLeftSwitch', onTrue, onFalse)
+
+    def condition(self):
+        return should_attempt_switch() and is_right_position() and is_left_switch()
+
+
 class IfIsMiddlePosRightSwitch(wpilib.command.ConditionalCommand):
     def __init__(self, onTrue, onFalse):
         super().__init__('IfIsMiddlePosRightSwitch', onTrue, onFalse)
 
     def condition(self):
         return should_attempt_switch() and is_middle_position() and is_right_switch()
+
+
+
+class IfIsMiddlePosLeftSwitch(wpilib.command.ConditionalCommand):
+    def __init__(self, onTrue, onFalse):
+        super().__init__('IfIsMiddlePosLeftSwitch', onTrue, onFalse)
+
+    def condition(self):
+        return should_attempt_switch() and is_middle_position() and is_left_switch()
+
+
+class IfIsLeftPosRightSwitch(wpilib.command.ConditionalCommand):
+    def __init__(self, onTrue, onFalse):
+        super().__init__('IfIsLeftPosRightSwitch', onTrue, onFalse)
+
+    def condition(self):
+        return should_attempt_switch() and is_left_position() and is_right_switch()
 
 
 class IfIsLeftPosLeftSwitch(wpilib.command.ConditionalCommand):

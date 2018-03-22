@@ -4,6 +4,8 @@ from commands.autoEncoders import *
 from commands.autoTimeBased import TimeBasedForward
 from commands.auto_conditions import *
 from commands.autoTimeBased import TimeBasedElevator, TimeBasedGrabber
+from commands.autoNavx import turnLeft,turnRight
+
 
 
 class SequentialCommands(wpilib.command.CommandGroup):
@@ -23,16 +25,33 @@ class SwitchCommands(wpilib.command.CommandGroup):
         self.addSequential(
             IfIsMiddlePosRightSwitch(
                 MiddlePosRightSwitchAuto(),
+                    IfIsMiddlePosLeftSwitch(
+                        MiddlePosLeftSwitchAuto(),
                 IfIsRightPosRightSwitch(
                     RightPosRightSwitchAuto(),
-                    IfIsLeftPosLeftSwitch(
-                        LeftPosLeftSwitchAuto(),
+                        IfIsRightPosLeftSwitch(
+                            RightPosLeftSwitchAuto(),
+                            IfIsLeftPosLeftSwitch(
+                            LeftPosLeftSwitchAuto(),
+                                IfIsLeftPosRightSwitch(
+                                    LeftPosRightSwitchAuto(),
+
                         Parallel(TimeBasedForward(4), TimeBasedElevator(2))
                     )
-                )))
+                ))))))
 
 
 class MiddlePosRightSwitchAuto(wpilib.command.CommandGroup):
+    def __init__(self):
+        super().__init__()
+        self.addSequential(Parallel(WaitForGamecode(), WaitForAutoIn()))
+        self.addSequential(Parallel(
+            AutoEncoders(10),
+            ElevatorSwitch(),
+        ))
+        self.addSequential(TimeBasedGrabber(0.5))
+
+class MiddlePosLeftSwitchAuto(wpilib.command.CommandGroup):
     def __init__(self):
         super().__init__()
         self.addSequential(Parallel(
@@ -40,8 +59,6 @@ class MiddlePosRightSwitchAuto(wpilib.command.CommandGroup):
             ElevatorSwitch(),
 
         ))
-        self.addSequential(TimeBasedGrabber(0.5))
-
 
 class RightPosRightSwitchAuto(wpilib.command.CommandGroup):
     def __init__(self):
@@ -50,9 +67,32 @@ class RightPosRightSwitchAuto(wpilib.command.CommandGroup):
             AutoEncoders(13),
             ElevatorSwitch(),
         ))
-        self.addSequential(AutoEncodersTurnLeft(90))
+        self.addSequential(turnLeft(90))
         self.addSequential(TimeBasedForward(1))
         self.addSequential(TimeBasedGrabber(0.5))
+
+class RightPosLeftSwitchAuto(wpilib.command.CommandGroup):
+    def __init__(self):
+        super().__init__()
+        self.addSequential(Parallel(
+            AutoEncoders(13),
+            ElevatorSwitch(),
+        ))
+        self.addSequential(turnRight(90))
+        self.addSequential(TimeBasedForward(1))
+        self.addSequential(TimeBasedGrabber(0.5))
+
+class LeftPosRightSwitchAuto(wpilib.command.CommandGroup):
+    def __init__(self):
+        super().__init__()
+        self.addSequential(Parallel(
+            AutoEncoders(13),
+            ElevatorSwitch(),
+        ))
+        self.addSequential(turnLeft(90))
+        self.addSequential(TimeBasedForward(1))
+        self.addSequential(TimeBasedGrabber(0.5))
+
 
 
 class LeftPosLeftSwitchAuto(wpilib.command.CommandGroup):
@@ -62,6 +102,6 @@ class LeftPosLeftSwitchAuto(wpilib.command.CommandGroup):
             AutoEncoders(13),
             ElevatorSwitch(),
         ))
-        self.addSequential(AutoEncodersTurnRight(90))
+        self.addSequential(turnRight(90))
         self.addSequential(TimeBasedForward(1))
         self.addSequential(TimeBasedGrabber(0.5))

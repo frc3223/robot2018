@@ -35,8 +35,9 @@ class AutoEncoders(wpilib.command.Command):
             elif -1000 < self.encoderDiff < 1000:  # if they are relatively the same
                 self.Rpower = -0.5
                 self.Lpower = 0.5
-            self.drivetrain.motor_rb.set(self.Rpower)
-            self.drivetrain.motor_lb.set(self.Lpower)
+            self.drivetrain.drive_forward(0.5)
+            #self.drivetrain.motor_rb.set(self.Rpower)
+            #self.drivetrain.motor_lb.set(self.Lpower)
         elif self.encoderL >= self.encoderVal:
             self.Rpower = 0
             self.Lpower = 0

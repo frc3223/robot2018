@@ -13,7 +13,7 @@ class Drivetrain(Subsystem):
     ''''''
 
     #: encoder/ft ratio
-    ratio = 886.27
+    ratio = 630
 
     def __init__(self):
         super().__init__('Drivetrain')
@@ -50,6 +50,9 @@ class Drivetrain(Subsystem):
 
         self.logger = None
         self.init_logger()
+
+    def drive_forward(self, motorF):
+        self.drive.arcadeDrive(-motorF, 0, squaredInputs= False)
 
     def execute_turn(self, angle):
         position = angle / 60.
@@ -229,6 +232,7 @@ class Drivetrain(Subsystem):
 
     def fps2_to_encpsp100ms(self, fps2):
         return fps2*self.ratio/10
+
 
     def periodic(self):
         #Variables for the Navx
