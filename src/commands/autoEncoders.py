@@ -22,7 +22,7 @@ class AutoEncoders(wpilib.command.Command):
         self.drivetrain.zeroEncoders()
 
     def execute(self):
-        self.encoderVal = self.feet * 880 - 2650 #Destination in feet converted to encoder ticks subracted by the error in encoder ticks to stop.
+        self.encoderVal = self.feet * self.drivetrain.ratio - 1150 #Destination in feet converted to encoder ticks subracted by the error in encoder ticks to stop.
         self.encoderR = abs(self.drivetrain.getRightEncoder())
         self.encoderL = abs(self.drivetrain.getLeftEncoder())
         self.encoderDiff = self.encoderR - self.encoderL

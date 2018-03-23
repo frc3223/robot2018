@@ -52,7 +52,10 @@ class Drivetrain(Subsystem):
         self.init_logger()
 
     def drive_forward(self, motorF):
-        self.drive.arcadeDrive(-motorF, 0, squaredInputs= False)
+        #self.drive.arcadeDrive(-motorF, 0, squaredInputs= False)
+        self.motor_lb.set(motorF)
+        self.motor_rb.set(-motorF * 0.8)
+        self.drive.feed()
 
     def execute_turn(self, angle):
         position = angle / 60.
