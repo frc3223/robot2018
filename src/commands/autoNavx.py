@@ -1,35 +1,31 @@
 from robotpy_ext.common_drivers import navx
 import wpilib
 
-class turnLeft(wpilib.command.Command):
+class TurnLeft(wpilib.command.Command):
     def __init__(self, degrees):
        super().__init__("autoNavx")
        self.requires(self.getRobot().drivetrain)
        self.drivetrain = self.getRobot().drivetrain
-       self.degrees = degrees
+       self.degrees = -degrees
+       self.cutoff = -degrees + 35
        self.power = 0
        self.done = False
 
     def initialize(self):
         self.drivetrain.zeroEncoders()
-        self.navx.reset()
+        self.drivetrain.zeroNavx()
 
     def execute(self):
-        self.drivetrain.getAngle()
-        if self.drivetrain.getAngle() < self.degrees:
-            self.Rpower = 0
-            self.Lpower = 0.7
-            self.drivetrain.motor_rb.set(self.Rpower)
-            self.drivetrain.motor_lb.set(self.Lpower)
+        print("left turn", self.drivetrain.getAngle(), self.cutoff)
+        if self.drivetrain.getAngle() > self.cutoff:
+            self.drivetrain.turn_left(0.4)
         elif self.drivetrain.getAngle() >= self.degrees:
             self.Rpower = 0
-            self.Lpower = 0
-            self.drivetrain.motor_rb.set(self.Rpower)
-            self.drivetrain.motor_lb.set(self.Lpower)
+            self.drivetrain.off()
             self.done = True
 
     def isFinished(self):
-        if (self.done and abs(self.drivetrain.motor_lb.getSelectedSensorVelocity(0)) <= 30 and abs(self.drivetrain.motor_rb.getSelectedSensorVelocity(0)) <= 30):
+        if self.done and self.drivetrain.wheels_stopped():
             self.done = False
             return True
         else:
@@ -37,35 +33,29 @@ class turnLeft(wpilib.command.Command):
 
 
 
-class turnRight(wpilib.command.Command):
+class TurnRight(wpilib.command.Command):
     def __init__(self, degrees):
-        super().__init__("autoNavx")
-        self.requires(self.getRobot().drivetrain)
+        super().__init__("Navx Turn Right")
         self.drivetrain = self.getRobot().drivetrain
+        self.requires(self.drivetrain)
         self.degrees = degrees
+        self.cutoff = degrees - 25
         self.done = False
 
     def initialize(self):
         self.drivetrain.zeroEncoders()
-        self.navx.reset()
+        self.drivetrain.zeroNavx()
 
     def execute(self):
 
-        if self.navx.getAngle() < self.degrees:
-            self.Rpower = 0.8
-            self.Lpower = 0
-            self.drivetrain.motor_rb.set(self.Rpower)
-            self.drivetrain.motor_lb.set(self.Lpower)
-        elif self.navx.getAngle() >= self.degrees:
-            self.Rpower = 0
-            self.Lpower = 0
-            self.drivetrain.motor_rb.set(self.Rpower)
-            self.drivetrain.motor_lb.set(self.Lpower)
+        if self.drivetrain.getAngle() < self.cutoff:
+            self.drivetrain.turn_right(0.4)
+        else:
+            self.drivetrain.off()
             self.done = True
 
     def isFinished(self):
-        if (self.done and abs(self.drivetrain.motor_lb.getSelectedSensorVelocity(0)) <= 30 and abs(
-                self.drivetrain.motor_rb.getSelectedSensorVelocity(0)) <= 30):
+        if self.done and self.drivetrain.wheels_stopped():
             self.done = False
             return True
         else:

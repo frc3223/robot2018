@@ -39,8 +39,8 @@ class Drivetrain(Subsystem):
         self.motor_lb.selectProfileSlot(0, 0)
         self.table = networktables.NetworkTables.getTable("/Drivetrain")
         self.sd_table = networktables.NetworkTables.getTable("/SmartDashboard")
-        self.motor_lb.setSensorPhase(True)
-        self.motor_rb.setSensorPhase(True)
+        self.motor_lb.setSensorPhase(False)
+        self.motor_rb.setSensorPhase(False)
         self.left_offset = 0
         self.right_offset = 0
 
@@ -49,13 +49,27 @@ class Drivetrain(Subsystem):
         self.computed_velocity = 0
 
         self.logger = None
-        self.init_logger()
+        #self.init_logger()
 
     def drive_forward(self, motorF):
         #self.drive.arcadeDrive(-motorF, 0, squaredInputs= False)
         self.motor_lb.set(motorF)
         self.motor_rb.set(-motorF * 0.8)
         self.drive.feed()
+
+    def turn_right(self, voltage):
+        self.motor_lb.set(voltage)
+        self.motor_rb.set(voltage)
+        self.drive.feed()
+
+    def turn_left(self, voltage):
+        self.motor_lb.set(-voltage)
+        self.motor_rb.set(-voltage)
+        self.drive.feed()
+
+    def wheels_stopped(self):
+        return abs(self.motor_lb.getSelectedSensorVelocity(0)) <= 30 and abs(
+            self.motor_rb.getSelectedSensorVelocity(0)) <= 30
 
     def execute_turn(self, angle):
         position = angle / 60.

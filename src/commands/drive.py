@@ -12,12 +12,19 @@ class Drive(wpilib.command.Command):
         self.drivetrain.motor_rb.configOpenLoopRamp(0.2, 0)
 
     def execute(self):
-         joystick = getJoystick()
-         fw = joystick.getRawAxis(1)
-         lr = joystick.getRawAxis(0)
-         self.drivetrain.drive.arcadeDrive(fw*.75, lr*.85)
-        #self.janky()
+        joystick = getJoystick()
+        fw = joystick.getRawAxis(1)
+        lr = joystick.getRawAxis(0)
 
+        fw2 = joystick.getRawAxis(5)
+        lr2 = joystick.getRawAxis(4)
+
+        if abs(fw2) > 0.2 or abs(lr2) > 0.2:
+             self.drivetrain.drive.arcadeDrive(fw2 * .3, lr2 * .5, squaredInputs=False)
+        elif abs(fw) > 0.2 or abs(lr) > 0.2:
+            self.drivetrain.drive.arcadeDrive(fw, lr, squaredInputs=False)
+        else:
+            self.drivetrain.drive.arcadeDrive(0, 0)
 
     def isFinished(self):
         return False

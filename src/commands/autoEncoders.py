@@ -35,7 +35,7 @@ class AutoEncoders(wpilib.command.Command):
             elif -1000 < self.encoderDiff < 1000:  # if they are relatively the same
                 self.Rpower = -0.5
                 self.Lpower = 0.5
-            self.drivetrain.drive_forward(0.5)
+            self.drivetrain.drive_forward(0.3)
             #self.drivetrain.motor_rb.set(self.Rpower)
             #self.drivetrain.motor_lb.set(self.Lpower)
         elif self.encoderL >= self.encoderVal:
@@ -52,6 +52,9 @@ class AutoEncoders(wpilib.command.Command):
             return True
         else:
             return False
+
+    def end(self):
+        self.drivetrain.off()
 
 
 class AutoEncodersTurnLeft(wpilib.command.Command):
@@ -111,16 +114,17 @@ class AutoEncodersTurnRight(wpilib.command.Command):
         self.drivetrain.zeroEncoders()
 
    def execute(self):
-       self.encoderVal = self.degrees * 14.5 - 310  # Destination in feet converted to encoder ticks subracted by the error in encoder ticks to stop.
+       self.encoderVal = self.degrees * 10.5 - 310  # Destination in feet converted to encoder ticks subracted by the error in encoder ticks to stop.
        self.encoderR = abs(self.drivetrain.getRightEncoder())
        self.encoderL = abs(self.drivetrain.getLeftEncoder())
        self.encoderDiff = self.encoderR - self.encoderL
 
        if self.encoderR < self.encoderVal:
-           self.Rpower = 0.7
-           self.Lpower = 0.7
+           self.Rpower = 0.5
+           self.Lpower = 0.5
            self.drivetrain.motor_rb.set(self.Rpower)
            self.drivetrain.motor_lb.set(self.Lpower)
+           self.drivetrain.drive.feed()
        elif self.encoderR >= self.encoderVal:
            self.Rpower = 0
            self.Lpower = 0
@@ -164,9 +168,16 @@ class ElevatorPosition(wpilib.command.Command):
 
 class ElevatorScale(ElevatorPosition):
     def __init__(self):
-        super().__init__("ElevatorScale",31000)
+        super().__init__("ElevatorScale",30000)
+        self.count = 0
+
     def isFinished(self):
-        if self.elevator.getCurrent() >= 40:
+        if self.elevator.getCurrent() >= 50:
+            self.count += 1
+        else:
+            self.count = 0
+
+        if self.count >= 10:
             return True
         return super().isFinished()
 

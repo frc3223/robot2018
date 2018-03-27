@@ -20,9 +20,13 @@ class Elevator(Subsystem):
         self.motor = ctre.WPI_TalonSRX(3)
         self.other_motor = ctre.WPI_TalonSRX(2)
         self.other_motor.follow(self.motor)
+
+        self.right_motor = ctre.WPI_TalonSRX(14)
+        self.other_right_motor = ctre.WPI_TalonSRX(15)
+        self.other_right_motor.follow(self.right_motor)
         self.zeroed = False
         self.motor.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder, 0, 0)
-        self.motor.configOpenLoopRamp(0, 0)
+        self.motor.configOpenLoopRamp(0.1, 0)
         self.elevator_table = networktables.NetworkTables.getTable('/Elevator')
         self.motor.setSensorPhase(True)
         self.initialize_motionMagic()
@@ -30,7 +34,7 @@ class Elevator(Subsystem):
         self.timer = wpilib.Timer()
         self.timer.start()
         self.logger = None
-        self.init_logger()
+        #self.init_logger()
 
 
     def init_logger(self):
@@ -75,7 +79,8 @@ class Elevator(Subsystem):
         return ftPerSec * self.ratio/10
 
     def hover(self):
-        self.motor.set(0.1)
+        self.motor.set(-0.1)
+        self.right_motor.set(0.1)
         self.fan.setSpeed(1.0)
 
     def descend(self, voltage):
@@ -83,24 +88,31 @@ class Elevator(Subsystem):
 
     def ascend(self, voltage):
         self.motor.set(voltage)
+        self.right_motor.set(-voltage)
 
     def test_drive_x(self, x):
         self.motor.set(x)
+        self.right_motor.set(-x)
 
     def test_drive_positive_light(self):
         self.motor.set(0.6)
+        self.right_motor.set(-0.6)
 
     def test_drive_positive(self):
-        self.motor.set(0.8)
+        self.motor.set(-1.0)
+        self.right_motor.set(1.0)
 
     def test_drive_negative(self):
-        self.motor.set(-0.6)
+        self.motor.set(0.6)
+        self.right_motor.set(-0.6)
 
     def test_drive_negative_light(self):
         self.motor.set(-0.4)
+        self.right_motor.set(0.4)
 
     def off(self):
         self.motor.stopMotor()
+        self.right_motor.stopMotor()
 
     def zeroEncoder(self):
         self.zeroed = True

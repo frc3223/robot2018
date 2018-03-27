@@ -31,6 +31,12 @@ def is_right_switch():
 def is_left_switch():
     return get_gamecode()[:1] == "l"
 
+def is_right_scale():
+    return get_gamecode()[1:2] == "r"
+
+def is_left_scale():
+    return get_gamecode()[1:2] == "l"
+
 
 def should_attempt_switch():
     table = networktables.NetworkTables.getTable("SmartDashboard")
@@ -83,7 +89,8 @@ class IfIsMiddlePosRightSwitch(wpilib.command.ConditionalCommand):
         super().__init__('IfIsMiddlePosRightSwitch', onTrue, onFalse)
 
     def condition(self):
-        return should_attempt_switch() and is_middle_position() and is_right_switch()
+        return is_right_switch()
+        #return should_attempt_switch() and is_middle_position() and is_right_switch()
 
 
 
@@ -109,7 +116,6 @@ class IfIsLeftPosLeftSwitch(wpilib.command.ConditionalCommand):
 
     def condition(self):
         return should_attempt_switch() and is_left_position() and is_left_switch()
-
 
 class WaitForAutoIn(wpilib.command.Command):
     def __init__(self):
