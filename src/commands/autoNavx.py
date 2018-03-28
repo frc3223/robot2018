@@ -14,6 +14,7 @@ class TurnLeft(wpilib.command.Command):
     def initialize(self):
         self.drivetrain.zeroEncoders()
         self.drivetrain.zeroNavx()
+        self.drivetrain.voltage_ramp_off()
 
     def execute(self):
         print("left turn", self.drivetrain.getAngle(), self.cutoff)
@@ -39,12 +40,13 @@ class TurnRight(wpilib.command.Command):
         self.drivetrain = self.getRobot().drivetrain
         self.requires(self.drivetrain)
         self.degrees = degrees
-        self.cutoff = degrees - 25
+        self.cutoff = degrees - 10
         self.done = False
 
     def initialize(self):
         self.drivetrain.zeroEncoders()
         self.drivetrain.zeroNavx()
+        self.drivetrain.voltage_ramp_off()
 
     def execute(self):
 

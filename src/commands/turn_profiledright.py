@@ -12,7 +12,7 @@ class TurnProfiledRight(wpilib.command.Command):
         self.drivetrain = self.getRobot().drivetrain
         self.requires(self.drivetrain)
         # degrees
-        self.profiler = TrapezoidalProfile(cruise_v=50, a=50, target_pos=angle, tolerance=5)
+        self.profiler = TrapezoidalProfile(cruise_v=70, a=50, target_pos=angle, tolerance=5)
         self.timer = wpilib.Timer()
 
     def initialize(self):

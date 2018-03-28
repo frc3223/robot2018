@@ -8,8 +8,7 @@ class Drive(wpilib.command.Command):
         self.requires(self.drivetrain)
 
     def initialize(self):
-        self.drivetrain.motor_lb.configOpenLoopRamp(0.2, 0)
-        self.drivetrain.motor_rb.configOpenLoopRamp(0.2, 0)
+        self.drivetrain.voltage_ramp_on()
 
     def execute(self):
         joystick = getJoystick()

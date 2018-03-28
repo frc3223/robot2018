@@ -71,18 +71,21 @@ class AutoEncodersTurnLeft(wpilib.command.Command):
 
     def initialize(self):
         self.drivetrain.zeroEncoders()
+        self.drivetrain.voltage_ramp_off()
 
     def execute(self):
-        self.encoderVal = self.degrees * 14.5 - 310 #Destination in feet converted to encoder ticks subracted by the error in encoder ticks to stop.
+        self.encoderVal = self.degrees * 10 - 500 #Destination in feet converted to encoder ticks subracted by the error in encoder ticks to stop.
         self.encoderR = abs(self.drivetrain.getRightEncoder())
         self.encoderL = abs(self.drivetrain.getLeftEncoder())
         self.encoderDiff = self.encoderR - self.encoderL
+        print("turn left", self.encoderR, self.encoderVal)
 
         if self.encoderR < self.encoderVal:
             self.Rpower = -0.7
             self.Lpower = -0.7
             self.drivetrain.motor_rb.set(self.Rpower)
             self.drivetrain.motor_lb.set(self.Lpower)
+            self.drivetrain.drive.feed()
         elif self.encoderR >= self.encoderVal:
             self.Rpower = 0
             self.Lpower = 0

@@ -71,6 +71,14 @@ class Drivetrain(Subsystem):
         return abs(self.motor_lb.getSelectedSensorVelocity(0)) <= 30 and abs(
             self.motor_rb.getSelectedSensorVelocity(0)) <= 30
 
+    def voltage_ramp_on(self):
+        self.motor_lb.configOpenLoopRamp(0.2, 0)
+        self.motor_rb.configOpenLoopRamp(0.2, 0)
+
+    def voltage_ramp_off(self):
+        self.motor_lb.configOpenLoopRamp(0, 0)
+        self.motor_rb.configOpenLoopRamp(0, 0)
+
     def execute_turn(self, angle):
         position = angle / 60.
         self.motor_rb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * position)
@@ -220,11 +228,13 @@ class Drivetrain(Subsystem):
         return self.navx.getAngle()
 
     def set_turn_velocity(self, v_degps):
+        print(v_degps)
         velocity_ratio = 1.6
         self.computed_velocity = v_encp100ms = velocity_ratio * v_degps
         #self.computed_velocity = v_encp100ms = 32
         self.motor_rb.set(ctre.ControlMode.Velocity, v_encp100ms)
         self.motor_lb.set(ctre.ControlMode.Velocity, v_encp100ms)
+        self.drive.feed()
 
     def execute_driveforward(self, positionL, positionR):
         self.motor_rb.set(ctre._impl.ControlMode.MotionMagic, self.ratio * positionR + self.right_offset)
