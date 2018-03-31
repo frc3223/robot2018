@@ -19,7 +19,7 @@ from commands import (
 from commands.autoEncoders import AutoEncodersTurnRight, AutoEncodersTurnLeft
 from commands.turn_profiledright import TurnProfiledRight
 from commands.autoNavx import TurnRight, TurnLeft
-from commands.autonomous import MiddlePosLeftSwitchAuto
+from commands.autonomous import MiddlePosLeftSwitchAuto, RightPosRightSwitchAuto
 
 class Gneiss(CommandBasedRobot):
     '''Main robot class'''
@@ -37,8 +37,11 @@ class Gneiss(CommandBasedRobot):
         self.intake = Intake()
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
-        #self.auto = autonomous.SwitchCommands()
-        self.auto = TurnRight(90)
+        #self.auto = autonomous.ForwardOnly()
+        self.auto = autonomous.SwitchCommands()
+        #self.auto = TurnRight(90)
+        #self.auto = Wait9ThenForward()
+        #self.auto = RightPosRightSwitchAuto()
         #self.auto = AutoEncodersTurnLeft(90)
         #self.auto = MiddlePosLeftSwitchAuto()
         self.elevatorSwitch = ElevatorSwitch()

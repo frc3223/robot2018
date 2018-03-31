@@ -129,6 +129,18 @@ class TimeBasedGrabber(wpilib.command.TimedCommand):
     def end(self):
         self.intake.grabberOff()
 
+class SpitOut(wpilib.command.TimedCommand):
+    def __init__(self):
+        super().__init__("SpitOut", 0.5)
+        self.intake = self.getRobot().intake
+        self.requires(self.intake)
+
+    def execute(self):
+        self.intake.open2Grabber()
+
+    def end(self):
+        self.intake.grabberOff()
+
 
 class TimeBasedElevator(wpilib.command.TimedCommand):
     def __init__(self, time):

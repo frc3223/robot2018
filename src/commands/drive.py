@@ -8,7 +8,7 @@ class Drive(wpilib.command.Command):
         self.requires(self.drivetrain)
 
     def initialize(self):
-        self.drivetrain.voltage_ramp_on()
+        self.drivetrain.voltage_ramp_off()
 
     def execute(self):
         joystick = getJoystick()

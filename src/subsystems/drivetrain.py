@@ -54,7 +54,7 @@ class Drivetrain(Subsystem):
     def drive_forward(self, motorF):
         #self.drive.arcadeDrive(-motorF, 0, squaredInputs= False)
         self.motor_lb.set(motorF)
-        self.motor_rb.set(-motorF * 0.8)
+        self.motor_rb.set(-motorF * 1.0)
         self.drive.feed()
 
     def turn_right(self, voltage):

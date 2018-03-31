@@ -31,6 +31,7 @@ class Elevator(Subsystem):
         self.motor.setSensorPhase(True)
         self.initialize_motionMagic()
         self.fan = wpilib.PWM(1)
+        self.fan2 = wpilib.PWM(0)
         self.timer = wpilib.Timer()
         self.timer.start()
         self.logger = None
@@ -82,6 +83,7 @@ class Elevator(Subsystem):
         self.motor.set(-0.1)
         self.right_motor.set(0.1)
         self.fan.setSpeed(1.0)
+        self.fan2.setSpeed(1.0)
 
     def descend(self, voltage):
         pass
