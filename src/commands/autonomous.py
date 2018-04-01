@@ -82,12 +82,11 @@ class MiddlePosLeftSwitchAuto(wpilib.command.CommandGroup):
     def __init__(self):
         super().__init__()
         self.addSequential(Parallel(
-            #TimeBasedForward(4),
             ElevatorSwitch(),
             Sequential(
                 AutoEncoders(5),
-                TurnLeft(90),
-                AutoEncoders(9),
+                TurnLeft(110),
+                AutoEncoders(10.5),
                 TurnRight(90),
                 AutoEncoders(6),
             )))
