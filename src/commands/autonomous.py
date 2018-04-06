@@ -36,9 +36,17 @@ class SwitchCommands(wpilib.command.CommandGroup):
                                         LeftPosLeftSwitchAuto(),
                                         IfIsLeftPosRightSwitch(
                                             ForwardOnly(),
-                                            ForwardOnly()
+                                                IfIsRightPosRightScale(
+                                                    RightPosRightScaleAuto(),
+                                                        IfIsRightPosLeftScale(
+                                                            RightPosLeftScaleAuto(),
+                                                                IfIsLeftPosLeftScale(
+                                                                    LeftPosLeftScaleAuto(),
+                                                                        IfIsLeftPosRightScale(
+                                                                            LeftPosRightScaleAuto(),
+                                                                            ForwardOnly(),
                             )
-                        ))))))
+                        ))))))))))
 
 class MiddleOnly(wpilib.command.CommandGroup):
     def __init__(self):
@@ -87,7 +95,7 @@ class MiddlePosLeftSwitchAuto(wpilib.command.CommandGroup):
                 AutoEncoders(5),
                 TurnLeft(110),
                 AutoEncoders(10.5),
-                TurnRight(90),
+                TurnRight(80),
                 AutoEncoders(6),
             )))
         self.addSequential(SpitOut())
@@ -99,7 +107,7 @@ class RightPosRightSwitchAuto(wpilib.command.CommandGroup):
             AutoEncoders(13),
             ElevatorSwitch(),
         ))
-        self.addSequential(TurnLeft(90))
+        self.addSequential(TurnLeft(110))
         self.addSequential(AutoEncoders(3))
         self.addSequential(SpitOut())
 
@@ -110,22 +118,28 @@ class RightPosLeftSwitchAuto(wpilib.command.CommandGroup):
             AutoEncoders(14),
             ElevatorSwitch(),
         ))
+
         self.addSequential(AutoEncodersTurnRight(90))
-        self.addSequential(AutoEncoders(13))
+        self.addSequential(AutoEncoders(14))
+        self.addSequential(AutoEncodersTurnLeft(90))
+        self.addSequential(AutoEncoders(3))
+        self.addSequential(AutoEncodersTurnRight(90))
+        self.addSequential(AutoEncoders(1))
         self.addSequential(SpitOut())
 
 class LeftPosRightSwitchAuto(wpilib.command.CommandGroup):
     def __init__(self):
         super().__init__()
         self.addSequential(Parallel(
-            AutoEncoders(16),
+            AutoEncoders(14),
             ElevatorSwitch(),
         ))
-        self.addSequential(AutoEncodersTurnRight(90))
+
+        self.addSequential(AutoEncodersTurnLeft(90))
         self.addSequential(AutoEncoders(14))
         self.addSequential(AutoEncodersTurnRight(90))
         self.addSequential(AutoEncoders(3))
-        self.addSequential(AutoEncodersTurnRight(90))
+        self.addSequential(AutoEncodersTurnLeft(90))
         self.addSequential(AutoEncoders(1))
         self.addSequential(SpitOut())
 
@@ -141,3 +155,64 @@ class LeftPosLeftSwitchAuto(wpilib.command.CommandGroup):
         self.addSequential(AutoEncodersTurnRight(90))
         self.addSequential(AutoEncoders(3))
         self.addSequential(SpitOut())
+
+class LeftPosLeftScaleAuto(wpilib.command.CommandGroup):
+    def __init__(self):
+        super().__init__()
+        self.addSequential(Parallel(
+            AutoEncoders(22.5),
+        ))
+        self.addSequential(ElevatorScale())
+        self.addSequential(SpitOut())
+        self.addSequential(AutoEncoders(-3))
+        self.addSequential(ElevatorSwitch(
+        ))
+
+
+class RightPosRightScaleAuto(wpilib.command.CommandGroup):
+    def __init__(self):
+        super().__init__()
+        self.addSequential(Parallel(
+            AutoEncoders(25),
+        ))
+        self.addSequential(AutoEncodersTurnLeft(90))
+        self.addSequential(ElevatorScale())
+        self.addSequential(SpitOut())
+        self.addSequential(AutoEncoders(-3))
+        self.addSequential(ElevatorSwitch())
+
+class LeftPosRightScaleAuto(wpilib.command.CommandGroup):
+    def __init__(self):
+        super().__init__()
+        self.addSequential(Parallel(
+            AutoEncoders(20),
+        ))
+
+        self.addSequential(AutoEncodersTurnRight(90))
+        self.addSequential(AutoEncoders(16.5))
+        self.addSequential(AutoEncodersTurnLeft(130))
+        self.addSequential(AutoEncoders(6))
+        self.addSequential(AutoEncoders(-1))
+        self.addSequential(ElevatorScale())
+        self.addSequential(SpitOut())
+        self.addSequential(AutoEncoders(-3))
+        self.addSequential(ElevatorSwitch())
+
+
+
+class RightPosLeftScaleAuto(wpilib.command.CommandGroup):
+    def __init__(self):
+        super().__init__()
+        self.addSequential(Parallel(
+            AutoEncoders(20),
+        ))
+
+        self.addSequential(AutoEncodersTurnLeft(110))
+        self.addSequential(AutoEncoders(16))
+        self.addSequential(AutoEncodersTurnRight(90))
+        self.addSequential(AutoEncoders(6))
+        self.addSequential(AutoEncoders(-1))
+        self.addSequential(ElevatorScale())
+        self.addSequential(SpitOut())
+        self.addSequential(AutoEncoders(-3))
+        self.addSequential(ElevatorSwitch())

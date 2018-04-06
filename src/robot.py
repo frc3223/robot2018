@@ -39,7 +39,7 @@ class Gneiss(CommandBasedRobot):
         self.joystick = getJoystick()
         #self.auto = autonomous.ForwardOnly()
         self.auto = autonomous.SwitchCommands()
-        #self.auto = TurnRight(90)
+        #self.auto = autonomous.LeftPosLeftScaleAuto()
         #self.auto = Wait9ThenForward()
         #self.auto = RightPosRightSwitchAuto()
         #self.auto = AutoEncodersTurnLeft(90)

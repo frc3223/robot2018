@@ -117,6 +117,34 @@ class IfIsLeftPosLeftSwitch(wpilib.command.ConditionalCommand):
     def condition(self):
         return should_attempt_switch() and is_left_position() and is_left_switch()
 
+class IfIsLeftPosLeftScale(wpilib.command.ConditionalCommand):
+    def __init__(self, onTrue, onFalse):
+        super().__init__('IfIsLeftPosLeftScale', onTrue, onFalse)
+
+    def condition(self):
+        return should_attempt_scale() and is_left_position() and is_left_scale()
+
+class IfIsLeftPosRightScale(wpilib.command.ConditionalCommand):
+    def __init__(self, onTrue, onFalse):
+        super().__init__('IfIsLeftPosRightScale', onTrue, onFalse)
+
+    def condition(self):
+        return should_attempt_scale() and is_left_position() and is_right_scale()
+
+class IfIsRightPosRightScale(wpilib.command.ConditionalCommand):
+    def __init__(self, onTrue, onFalse):
+        super().__init__('IfIsLeftPosRightScale', onTrue, onFalse)
+
+    def condition(self):
+        return should_attempt_scale() and is_right_position() and is_right_scale()
+
+class IfIsRightPosLeftScale(wpilib.command.ConditionalCommand):
+    def __init__(self, onTrue, onFalse):
+        super().__init__('IfIsLeftPosRightScale', onTrue, onFalse)
+
+    def condition(self):
+        return should_attempt_scale() and is_right_position() and is_left_scale()
+
 class WaitForAutoIn(wpilib.command.Command):
     def __init__(self):
         super().__init__("WaitForAutoIn", 5)
