@@ -24,6 +24,7 @@ class Elevator(Subsystem):
         self.right_motor = ctre.WPI_TalonSRX(14)
         self.other_right_motor = ctre.WPI_TalonSRX(15)
         self.other_right_motor.follow(self.right_motor)
+        self.elevator_mode = ""
         self.zeroed = False
         self.motor.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder, 0, 0)
         self.motor.configOpenLoopRamp(0.1, 0)
@@ -35,19 +36,21 @@ class Elevator(Subsystem):
         self.timer = wpilib.Timer()
         self.timer.start()
         self.logger = None
-        #self.init_logger()
+        self.init_logger()
 
 
     def init_logger(self):
         self.logger = DataLogger('elevator.csv')
         self.logger.add("time", lambda: self.timer.get())
         self.logger.add("enc_pos", lambda: self.motor.getSelectedSensorPosition(0))
-        #self.logger.add("voltagep_motor", lambda: self.motor.getMotorOutputPercent())
-        #self.logger.add("voltagep_othermotor", lambda: self.other_motor.getMotorOutputPercent())
+        self.logger.add("voltagep_motor", lambda: self.motor.getMotorOutputPercent())
+        self.logger.add("voltagep_rightmotor", lambda: self.right_motor.getMotorOutputPercent())
         self.logger.add("voltage", lambda: self.motor.getBusVoltage())
+        self.logger.add("voltage", lambda: self.right_motor.getBusVoltage())
         self.logger.add("current_motor", lambda: self.motor.getOutputCurrent())
-        self.logger.add("current_othermotor", lambda: self.other_motor.getOutputCurrent())
+        self.logger.add("current_rightmotor", lambda: self.right_motor.getOutputCurrent())
         self.logger.add("zeroed", lambda: 1 if self.zeroed else 0)
+        self.logger.add("endlogtime", lambda: self.timer.get())
 
     def initialize_motionMagic(self):
         self.motor.configMotionAcceleration(int(self.ftToEncoder_accel(1)), 0)

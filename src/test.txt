@@ -1,0 +1,10 @@
+if is_right_position() and is_right_switch() and ??:
+    do right pos right switch
+elif is_right_position() and is_left_switch() and ??:
+    do right pos left switch
+elif is_left_position() and is_left_switch() and ??:
+    do left pos left switch
+elif is_left_position() and is_left_switch() and ??:
+    do left pos right switch
+elif is_right_position() and is_right_switch() and ??:
+    do right pos right switch

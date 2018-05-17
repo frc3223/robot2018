@@ -152,6 +152,9 @@ class ElevatorPosition(wpilib.command.Command):
         self.position = position
         self.diff = 500
 
+    def initialize(self):
+        self.elevator.elevator_mode = "ElevatorPosition(%s)" % self.position
+
     def execute(self):
         if self.elevator.zeroed:
             if self.elevator.getEncoderPosition() < self.position - self.diff:
@@ -167,6 +170,7 @@ class ElevatorPosition(wpilib.command.Command):
         return abs(self.elevator.getEncoderPosition() - self.position) < self.diff
 
     def end(self):
+        self.elevator.elevator_mode = ""
         self.elevator.hover()
 
 class ElevatorScale(ElevatorPosition):
