@@ -31,9 +31,9 @@ def test_profiler():
 
 def test_drivetrain_nt():
     import networktables
-    from robot import Gneiss
+    from robot import Rockslide
 
-    robot = Gneiss()
+    robot = Rockslide()
     robot.robotInit()
     drivetrain = robot.drivetrain
 
