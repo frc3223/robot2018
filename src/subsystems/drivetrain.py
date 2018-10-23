@@ -285,6 +285,20 @@ class Drivetrain(Subsystem):
     def fps2_to_encpsp100ms(self, fps2):
         return fps2*self.ratio/10
 
+    def getVoltage(self):
+        return self.motor_rb.getBusVoltage()
+
+    def getLeftEncoderVelocity(self):
+        return self.motor_lb.getSelectedSensorVelocity(0)
+
+    def getRightEncoderVelocity(self):
+        return self.motor_rb.getSelectedSensorVelocity(0)
+
+    def setLeftMotor(self, vp):
+        self.motor_lb.set(vp)
+
+    def setRightMotor(self, vp):
+        self.motor_rb.set(vp)
 
     def periodic(self):
         #Variables for the Navx

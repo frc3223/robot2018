@@ -22,7 +22,7 @@ from commands.turn_profiledright import TurnProfiledRight
 from commands.autoNavx import TurnRight, TurnLeft
 from commands.autonomous import MiddlePosLeftSwitchAuto, RightPosRightSwitchAuto
 
-class Gneiss(CommandBasedRobot):
+class Rockslide(CommandBasedRobot):
     '''Main robot class'''
 
     def robotInit(self):
@@ -76,4 +76,4 @@ class Gneiss(CommandBasedRobot):
 
 
 if __name__ == '__main__':
-    wpilib.run(Gneiss)
+    wpilib.run(Rockslide)
