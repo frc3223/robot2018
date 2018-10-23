@@ -21,6 +21,7 @@ from commands.autoEncoders import AutoEncodersTurnRight, AutoEncodersTurnLeft
 from commands.turn_profiledright import TurnProfiledRight
 from commands.autoNavx import TurnRight, TurnLeft
 from commands.autonomous import MiddlePosLeftSwitchAuto, RightPosRightSwitchAuto
+from commands.profiled_forward import ProfiledForward
 
 class Rockslide(CommandBasedRobot):
     '''Main robot class'''
@@ -40,7 +41,8 @@ class Rockslide(CommandBasedRobot):
         self.joystick = getJoystick()
         self.joystick1 = getJoystick1()
         #self.auto =  driveForward.DriveForward(16)
-        self.auto = AutoEncoders(20)
+        #self.auto = AutoEncoders(20)
+        self.auto = ProfiledForward(20)
         #self.auto = autonomous.Autonomuscc()
         #self.auto = AutoEncoders()
         self.elevatorSwitch = ElevatorSwitch()
@@ -53,8 +55,8 @@ class Rockslide(CommandBasedRobot):
     def teleopInit(self):
         self.drivetrain.zeroEncoders()
         self.drivetrain.zeroNavx()
-        buttonA = JoystickButton1(self.joystick1, 1)
-        buttonY = JoystickButton1(self.joystick1, 4)
+        buttonA = JoystickButton(self.joystick1, 1)
+        buttonY = JoystickButton(self.joystick1, 4)
 
         buttonA.whenPressed(self.elevatorIntake)
         buttonY.whenPressed(self.elevatorScale)

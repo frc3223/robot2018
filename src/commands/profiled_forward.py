@@ -21,8 +21,8 @@ class ProfiledForward(wpilib.command.Command):
         self.ctrl_heading.setInputRange(-180, 180)
         self.ctrl_heading.setOutputRange(-0.5, 0.5)
 
-        self.max_velocity = self.drivetrain.fps_to_encp100ms(8)
-        self.max_acceleration = self.drivetrain.fps2_to_encpsp100ms(4)
+        self.max_velocity = self.drivetrain.fps_to_encp100ms(3)
+        self.max_acceleration = self.drivetrain.fps2_to_encpsp100ms(3)
         self.profiler_l = TrapezoidalProfile(
             cruise_v=self.max_velocity,
             a=self.max_acceleration,
