@@ -41,6 +41,11 @@ class Drivetrain(Subsystem):
         self.sd_table = networktables.NetworkTables.getTable("/SmartDashboard")
         self.motor_lb.setSensorPhase(False)
         self.motor_rb.setSensorPhase(False)
+
+        self.motor_lb.setInverted(False)
+        self.motor_rb.setInverted(False)
+        self.motor_rf.setInverted(False)
+        self.motor_lf.setInverted(False)
         self.left_offset = 0
         self.right_offset = 0
 
@@ -49,7 +54,7 @@ class Drivetrain(Subsystem):
         self.computed_velocity = 0
 
         self.logger = None
-        #self.init_logger()
+        self.init_logger()
 
     def drive_forward(self, motorF):
         #self.drive.arcadeDrive(-motorF, 0, squaredInputs= False)
@@ -97,7 +102,7 @@ class Drivetrain(Subsystem):
     def init_logger(self):
         self.logger = DataLogger('drivetrain.csv')
         self.logger.add("time", lambda: self.timer.get())
-        self.logger.add("heading", lambda: self.navx.getAngle())
+        #self.logger.add("heading", lambda: self.navx.getAngle())
         self.logger.add("enc_pos_l", lambda: self.getLeftEncoder())
         self.logger.add("enc_pos_r", lambda: self.getRightEncoder())
         self.logger.add("enc_vel_l", lambda: self.motor_lb.getSelectedSensorVelocity(0))
@@ -106,17 +111,19 @@ class Drivetrain(Subsystem):
         #self.logger.add("error_r", lambda: self.motor_rb.getClosedLoopError(0))
         #self.logger.add("target_l", lambda: self.motor_lb.getClosedLoopTarget(0))
         #self.logger.add("target_r", lambda: self.motor_rb.getClosedLoopTarget(0))
-        self.logger.add("computed_velocity", lambda: self.computed_velocity)
-        self.logger.add("mode", lambda: self.running_command_name())
+        #self.logger.add("computed_velocity", lambda: self.computed_velocity)
+        #self.logger.add("mode", lambda: self.running_command_name())
         self.logger.add("voltage", lambda: self.motor_lb.getBusVoltage())
         #self.logger.add("voltagep_l", lambda: self.motor_lb.getMotorOutputPercent())
         #self.logger.add("voltagep_r", lambda: self.motor_rb.getMotorOutputPercent())
-        self.logger.add("current_rf", lambda: self.pdp.getCurrent(0))
-        self.logger.add("current_rb", lambda: self.pdp.getCurrent(1))
-        self.logger.add("current_lf", lambda: self.pdp.getCurrent(15))
-        self.logger.add("current_lb", lambda: self.pdp.getCurrent(13))
-        self.logger.add("enc_offset_l", lambda: self.left_offset)
-        self.logger.add("enc_offset_r", lambda: self.right_offset)
+        #self.logger.add("current_rf", lambda: self.pdp.getCurrent(0))
+        #self.logger.add("current_rb", lambda: self.pdp.getCurrent(1))
+        #self.logger.add("current_lf", lambda: self.pdp.getCurrent(15))
+        #self.logger.add("current_lb", lambda: self.pdp.getCurrent(13))
+        #self.logger.add("enc_offset_l", lambda: self.left_offset)
+        #self.logger.add("enc_offset_r", lambda: self.right_offset)
+        self.logger.add("VPR", lambda: self.motor_rb.getMotorOutputPercent())
+        self.logger.add("VRL", lambda: self.motor_lb.getMotorOutputPercent())
 
     def running_command_name(self):
         command = self.getCurrentCommand()
@@ -124,8 +131,10 @@ class Drivetrain(Subsystem):
             return command.getName()
 
     def zeroEncoders(self):
-        self.right_offset = self.motor_rb.getSelectedSensorPosition(0)
-        self.left_offset = self.motor_lb.getSelectedSensorPosition(0)
+        self.right_offset = 0
+        self.motor_rb.setSelectedSensorPosition(0, 0, 0)
+        self.left_offset = 0
+        self.motor_lb.setSelectedSensorPosition(0, 0, 0)
 
     def getLeftEncoder(self):
         return self.motor_lb.getSelectedSensorPosition(0) - self.left_offset
@@ -175,7 +184,7 @@ class Drivetrain(Subsystem):
 
     def initialize_driveForward(self):
         self.zeroEncoders()
-        self.config_parameters(p=0.18, i=0.001, d=2, f=0)
+        self.config_parameters(p=1, i=0.001, d=0, f=0, p_left = .5, i_left = 0.001)
         self.config_motionmagic(v_fps=3.5, a_fps2=5.0)
 
     def initialize_velocity_closedloop(self):
@@ -201,7 +210,15 @@ class Drivetrain(Subsystem):
         self.motor_lb.config_kI(0, 0.00, 0)
         self.motor_lb.config_kD(0, 450, 0)
 
-    def config_parameters(self, p, i, f, d, nominal_forward = 0, nominal_reverse = 0, peak_forward = 1, peak_reverse = -1):
+    def config_parameters(self, p, i, f, d, i_left = None, p_left = None, d_left = None, f_left = None, nominal_forward = 0, nominal_reverse = 0, peak_forward = 1, peak_reverse = -1):
+        if i_left is None:
+            i_left = i
+        if p_left is None:
+            p_left = p
+        if f_left is None:
+            f_left = f
+        if d_left is None:
+            d_left = d
         self.motor_rb.configNominalOutputForward(nominal_forward, 0)
         self.motor_lb.configNominalOutputForward(nominal_forward, 0)
         self.motor_rb.configNominalOutputReverse(nominal_reverse, 0)
@@ -219,10 +236,11 @@ class Drivetrain(Subsystem):
         self.motor_rb.config_kI(0, i, 0)
         self.motor_rb.config_kD(0, d, 0)
 
-        self.motor_lb.config_kF(0, f, 0)
-        self.motor_lb.config_kP(0, p, 0)
-        self.motor_lb.config_kI(0, i, 0)
-        self.motor_lb.config_kD(0, d, 0)
+        self.motor_lb.config_kF(0, f_left, 0)
+        self.motor_lb.config_kP(0, p_left, 0)
+        self.motor_lb.config_kI(0, i_left, 0)
+        self.motor_lb.config_kD(0, d_left, 0)
+        #
 
     def config_motionmagic(self, v_fps, a_fps2):
         self.motor_rb.configMotionAcceleration(int(self.fps2_to_encpsp100ms(v_fps)), 0)
@@ -251,6 +269,7 @@ class Drivetrain(Subsystem):
         sensorPL = self.motor_lb.getSelectedSensorPosition(0)
         a1 = (target-0.2)*self.ratio
         a2 = (target+0.2)*self.ratio
+        print("is finished", a1, a2, sensorPL)
         if a1 < sensorPL < a2:
             return True
 

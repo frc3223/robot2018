@@ -7,6 +7,9 @@ trajectory/*.csv
 src/tests/.pytest_cache/
 # Byte-compiled / optimized / DLL files
 __pycache__/
+pip_cache/
+src/opkg_cache
+src/.installer_config
 *.py[cod]
 *$py.class
 

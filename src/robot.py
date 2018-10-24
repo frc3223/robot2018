@@ -10,6 +10,7 @@ from commands.autoEncoders import (
 from wpilib.buttons.joystickbutton import JoystickButton
 
 from oi import getJoystick
+from oi import getJoystick1
 from subsystems import (Drivetrain, Elevator, Intake)
 from wpilib.command import Command
 from commands import (
@@ -20,6 +21,7 @@ from commands.autoEncoders import AutoEncodersTurnRight, AutoEncodersTurnLeft
 from commands.turn_profiledright import TurnProfiledRight
 from commands.autoNavx import TurnRight, TurnLeft
 from commands.autonomous import MiddlePosLeftSwitchAuto, RightPosRightSwitchAuto
+from commands.profiled_forward import ProfiledForward
 
 class Rockslide(CommandBasedRobot):
     '''Main robot class'''
@@ -37,14 +39,12 @@ class Rockslide(CommandBasedRobot):
         self.intake = Intake()
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
-        #self.auto = autonomous.ForwardOnly()
-        #self.auto = autonomous.SwitchCommands()
-        self.auto = autonomous.Autonomuscc()
-        #self.auto = autonomous.LeftPosLeftScaleAuto()
-        #self.auto = Wait9ThenForward()
-        #self.auto = RightPosRightSwitchAuto()
-        #self.auto = AutoEncodersTurnLeft(90)
-        #self.auto = MiddlePosLeftSwitchAuto()
+        self.joystick1 = getJoystick1()
+        #self.auto =  driveForward.DriveForward(16)
+        #self.auto = AutoEncoders(20)
+        self.auto = ProfiledForward(20)
+        #self.auto = autonomous.Autonomuscc()
+        #self.auto = AutoEncoders()
         self.elevatorSwitch = ElevatorSwitch()
         self.elevatorScale = ElevatorScale()
         self.elevatorIntake = ElevatorIntake()
@@ -55,13 +55,11 @@ class Rockslide(CommandBasedRobot):
     def teleopInit(self):
         self.drivetrain.zeroEncoders()
         self.drivetrain.zeroNavx()
-        buttonA = JoystickButton(self.joystick, 1)
-        buttonB = JoystickButton(self.joystick, 2)
-        buttonY = JoystickButton(self.joystick, 4)
+        buttonA = JoystickButton(self.joystick1, 1)
+        buttonY = JoystickButton(self.joystick1, 4)
 
         buttonA.whenPressed(self.elevatorIntake)
         buttonY.whenPressed(self.elevatorScale)
-        buttonB.whenPressed(self.elevatorSwitch)
 
     def teleopPeriodic(self):
         super().teleopPeriodic()
