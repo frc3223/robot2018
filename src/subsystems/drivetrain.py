@@ -54,6 +54,7 @@ class Drivetrain(Subsystem):
         self.computed_velocity = 0
 
         self.logger = None
+        self.logger_enabled = False
         self.init_logger()
 
     def drive_forward(self, motorF):
@@ -76,6 +77,9 @@ class Drivetrain(Subsystem):
     def turn_left(self, voltage):
         self.motor_lb.set(-voltage)
         self.motor_rb.set(-voltage)
+        self.drive.feed()
+
+    def feed(self):
         self.drive.feed()
 
     def wheels_stopped(self):
@@ -102,7 +106,7 @@ class Drivetrain(Subsystem):
     def init_logger(self):
         self.logger = DataLogger('drivetrain.csv')
         self.logger.add("time", lambda: self.timer.get())
-        #self.logger.add("heading", lambda: self.navx.getAngle())
+        self.logger.add("heading", lambda: self.navx.getAngle())
         self.logger.add("enc_pos_l", lambda: self.getLeftEncoder())
         self.logger.add("enc_pos_r", lambda: self.getRightEncoder())
         self.logger.add("enc_vel_l", lambda: self.motor_lb.getSelectedSensorVelocity(0))
@@ -332,5 +336,5 @@ class Drivetrain(Subsystem):
         #self.table.putNumber("Right/Voltage", voltageR)
 
 
-        if self.logger is not None:
+        if self.logger is not None and self.logger_enabled:
             self.logger.log()
