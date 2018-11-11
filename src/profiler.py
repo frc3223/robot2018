@@ -9,6 +9,8 @@ class TrapezoidalProfile:
         self.tolerance = tolerance
         self.cruise_v_scale = 1
         self.do_print = False
+        self.adist = 0
+        self.err = 0
 
     @property
     def cruise_v(self):
@@ -33,8 +35,11 @@ class TrapezoidalProfile:
         else:
             adist = 0.5 * v ** 2 / a
 
+        self.adist = adist
+
         err = self.target_pos - current_pos
 
+        self.err = err
         self.current_a = 0
 
         def inc():

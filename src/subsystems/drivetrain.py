@@ -337,4 +337,8 @@ class Drivetrain(Subsystem):
 
 
         if self.logger is not None and self.logger_enabled:
+            t1 = self.timer.get()
             self.logger.log()
+            t2 = self.timer.get()
+
+            print('log dt: ', (t2-t1))

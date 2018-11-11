@@ -17,6 +17,8 @@ class DataLogger:
         self.writer = csv.writer(self.file)
         self.header_logged = False
         self.log_while_disabled = False
+        self.timer = wpilib.Timer()
+        self.timer.start()
 
     def add(self, name, getter):
         self.data_getters[name] = getter
@@ -27,9 +29,13 @@ class DataLogger:
         if not self.header_logged:
             self.log_header()
         row = []
+        t1 = self.timer.get()
         for key in self.data_getters.keys():
             row.append(self.data_getters[key]())
+        t2 = self.timer.get()
         self.writer.writerow(row)
+        t3 = self.timer.get()
+        print("ts logs: %s %s" % (t2-t1, t3-t2))
 
     def log_header(self):
         self.writer.writerow(self.data_getters.keys())

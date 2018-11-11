@@ -1,4 +1,5 @@
 import wpilib.command
+from wpilib import Timer
 
 from data_logger import DataLogger
 from profiler import TrapezoidalProfile
@@ -11,8 +12,10 @@ class ProfiledForward(wpilib.command.Command):
         super().__init__("ProfiledForward")
         self.drivetrain = self.getRobot().drivetrain
         self.requires(self.drivetrain)
+        self.dist_ft = distance_ft
         self.dist_enc = distance_ft * self.drivetrain.ratio
-        self.period = 0.01
+        self.timer = Timer()
+        self.period = self.getRobot().getPeriod()
 
         self.ctrl_heading = PIDController(
             Kp=0, Ki=0, Kd=0, Kf=0,
@@ -23,19 +26,19 @@ class ProfiledForward(wpilib.command.Command):
         self.ctrl_heading.setInputRange(-180, 180)
         self.ctrl_heading.setOutputRange(-0.5, 0.5)
 
-        self.max_velocity = self.drivetrain.fps_to_encp100ms(3)
-        self.max_acceleration = self.drivetrain.fps2_to_encpsp100ms(3)
+        self.max_velocity = 3 # ft/sec
+        self.max_acceleration = 3 # ft/sec^2
         self.profiler_l = TrapezoidalProfile(
             cruise_v=self.max_velocity,
             a=self.max_acceleration,
-            target_pos=self.dist_enc, 
-            tolerance=(3/12.)*self.drivetrain.ratio, # 3 inches
+            target_pos=self.dist_ft, 
+            tolerance=(3/12.), # 3 inches
         )
         self.profiler_r = TrapezoidalProfile(
             cruise_v=self.max_velocity,
             a=self.max_acceleration,
-            target_pos=-self.dist_enc, 
-            tolerance=(3/12.)*self.drivetrain.ratio, # 3 inches
+            target_pos=-self.dist_ft, 
+            tolerance=(3/12.), # 3 inches
         )
         self.ctrl_l = DriveController(
             Kp=0, Kd=0, 
@@ -60,8 +63,8 @@ class ProfiledForward(wpilib.command.Command):
         self.target_v_r = 0
         self.target_a_l = 0
         self.target_a_r = 0
-        self.pos_l = 0
-        self.pos_r = 0
+        self.pos_ft_l = 0
+        self.pos_ft_r = 0
 
     def initialize(self):
         self.drivetrain.zeroEncoders()
@@ -72,31 +75,40 @@ class ProfiledForward(wpilib.command.Command):
         self.logger = self.drivetrain.logger
         self.logger.add("profile_vel_r", lambda: self.target_v_r)
         self.logger.add("profile_vel_l", lambda: self.target_v_l)
+        self.logger.add("pos_ft_l", lambda: self.pos_ft_l)
+        self.logger.add("target_pos_l", lambda: self.profiler_l.target_pos)
+        self.logger.add("adist", lambda: self.profiler_l.adist)
+        self.logger.add("err", lambda: self.profiler_l.err)
         self.drivetrain.logger_enabled = True
-        print ('pdf init')
+        self.timer.start()
+        #print ('pdf init')
 
     def execute(self):
-        self.pos_l = self.drivetrain.getLeftEncoder()
-        self.pos_r = self.drivetrain.getRightEncoder()
+        self.pos_ft_l = self.drivetrain.getLeftEncoder() / self.drivetrain.ratio
+        self.pos_ft_r = self.drivetrain.getRightEncoder() / self.drivetrain.ratio
 
-        self.profiler_l.calculate_new_velocity(self.pos_l, self.period)
-        self.profiler_r.calculate_new_velocity(self.pos_r, self.period)
+        #print ('pdf exec ', self.timer.get())
+        self.profiler_l.calculate_new_velocity(self.pos_ft_l, self.period )
+        self.profiler_r.calculate_new_velocity(self.pos_ft_r, self.period )
 
-        self.ctrl_l.setSetpoint(self.profiler_l.current_target_v)
-        self.ctrl_l.setAccelerationSetpoint(self.profiler_l.current_a)
-        self.ctrl_r.setSetpoint(self.profiler_r.current_target_v)
-        self.ctrl_r.setAccelerationSetpoint(self.profiler_r.current_a)
+        self.target_v_l = self.drivetrain.fps_to_encp100ms(self.profiler_l.current_target_v)
+        self.target_v_r = self.drivetrain.fps_to_encp100ms(self.profiler_r.current_target_v)
+        self.target_a_l = self.drivetrain.fps2_to_encpsp100ms(self.profiler_l.current_a)
+        self.target_a_r = self.drivetrain.fps2_to_encpsp100ms(self.profiler_r.current_a)
+
+        self.ctrl_l.setSetpoint(self.target_v_l)
+        self.ctrl_l.setAccelerationSetpoint(self.target_a_l)
+        self.ctrl_r.setSetpoint(self.target_v_r)
+        self.ctrl_r.setAccelerationSetpoint(self.target_a_r)
+
+        #self.drivetrain.setLeftMotor(self.ctrl_l.calculateFeedForward())
+        #self.drivetrain.setRightMotor(self.ctrl_r.calculateFeedForward())
 
         self.drivetrain.feed()
-        self.target_v_l = self.profiler_l.current_target_v
-        self.target_v_r = self.profiler_r.current_target_v
-        self.target_a_l = self.profiler_l.current_a
-        self.target_a_r = self.profiler_r.current_a
-        print ('pdf exec')
 
     def isFinished(self):
         return (
-            abs(self.pos_l - self.dist_enc) < self.drivetrain.ratio * 1/.3 and
+            abs(self.pos_ft_l - self.dist_ft) < 1/.3 and
             self.profiler_l.current_target_v == 0 and
             self.profiler_l.current_a == 0 and 
             self.profiler_r.current_target_v == 0 and 
@@ -109,7 +121,7 @@ class ProfiledForward(wpilib.command.Command):
         self.drivetrain.off()
         self.drivetrain.logger_enabled = False
         self.logger.flush()
-        print ('pdf end')
+        #print ('pdf end')
 
     def correct_heading(self, correction):
         self.profiler_l.setCruiseVelocityScale(1+correction)
