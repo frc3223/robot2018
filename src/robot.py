@@ -9,6 +9,7 @@ from commands.autoEncoders import (
 )
 from wpilib.buttons.joystickbutton import JoystickButton
 
+from commands.trajectories import CsvTrajectoryCommand
 from oi import getJoystick
 from oi import getJoystick1
 from subsystems import (Drivetrain, Elevator, Intake)
@@ -42,7 +43,8 @@ class Rockslide(CommandBasedRobot):
         self.joystick1 = getJoystick1()
         #self.auto =  driveForward.DriveForward(16)
         #self.auto = AutoEncoders(20)
-        self.auto = ProfiledForward(10)
+        #self.auto = ProfiledForward(10)
+        self.auto = CsvTrajectoryCommand("traj1.tra")
         #self.auto = autonomous.Autonomuscc()
         #self.auto = AutoEncoders()
         self.elevatorSwitch = ElevatorSwitch()

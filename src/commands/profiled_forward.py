@@ -26,16 +26,17 @@ class ProfiledForward(wpilib.command.Command):
         self.ctrl_heading.setInputRange(-180, 180)
         self.ctrl_heading.setOutputRange(-0.5, 0.5)
 
-        self.max_velocity = 3 # ft/sec
+        self.max_velocity_fps = 3 # ft/sec
+        self.max_v_encps = self.drivetrain.fps_to_encp100ms(self.max_velocity_fps)
         self.max_acceleration = 3 # ft/sec^2
         self.profiler_l = TrapezoidalProfile(
-            cruise_v=self.max_velocity,
+            cruise_v=self.max_velocity_fps,
             a=self.max_acceleration,
             target_pos=self.dist_ft, 
             tolerance=(3/12.), # 3 inches
         )
         self.profiler_r = TrapezoidalProfile(
-            cruise_v=self.max_velocity,
+            cruise_v=self.max_velocity_fps,
             a=self.max_acceleration,
             target_pos=-self.dist_ft, 
             tolerance=(3/12.), # 3 inches
@@ -48,7 +49,7 @@ class ProfiledForward(wpilib.command.Command):
             output=self.drivetrain.setLeftMotor,
             period=self.period,
         )
-        self.ctrl_l.setInputRange(-self.max_velocity, self.max_velocity)
+        self.ctrl_l.setInputRange(-self.max_v_encps, self.max_v_encps)
         self.ctrl_r = DriveController(
             Kp=0, Kd=0, 
             Ks=1.320812, Kv=0.013736, Ka=0.005938, 
@@ -57,7 +58,7 @@ class ProfiledForward(wpilib.command.Command):
             output=self.drivetrain.setRightMotor,
             period=self.period,
         )
-        self.ctrl_r.setInputRange(-self.max_velocity, self.max_velocity)
+        self.ctrl_r.setInputRange(-self.max_v_encps, self.max_v_encps)
 
         self.target_v_l = 0
         self.target_v_r = 0

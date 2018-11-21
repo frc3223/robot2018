@@ -1,30 +1,8 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from data_logger import DataLogger
-
-import pytest
 
 from robot import Rockslide
 from commands.profiled_forward import ProfiledForward
-
-import hal
-import hal_impl
-from hal_impl.sim_hooks import SimHooks as BaseSimHooks
-
-
-class SimHooks(BaseSimHooks):
-    def __init__(self):
-        super().__init__()
-        self.time = 0.0
-
-    def getTime(self):
-        return self.time
-
-
-@pytest.fixture(scope='function')
-def sim_hooks():
-    with patch('hal_impl.functions.hooks', new=SimHooks()) as hooks:
-        hal_impl.functions.reset_hal()
-        yield hooks
 
 
 def test_ProfiledForward1(Notifier):
