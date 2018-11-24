@@ -35,7 +35,7 @@ class DataLogger:
         t2 = self.timer.get()
         self.writer.writerow(row)
         t3 = self.timer.get()
-        print("ts logs: %s %s" % (t2-t1, t3-t2))
+        #print("ts logs: %s %s" % (t2-t1, t3-t2))
 
     def log_header(self):
         self.writer.writerow(self.data_getters.keys())

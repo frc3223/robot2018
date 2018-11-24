@@ -1,23 +1,73 @@
 import csv
 import math
 
-import wpilib.command
 from wpilib import Timer
+from wpilib.command import Command
 
-from data_logger import DataLogger
-from profiler import TrapezoidalProfile
+from commands.statespace import StateSpaceDriveController
 from pidcontroller import PIDController
 from drivecontroller import DriveController
 
 
-class CsvTrajectoryCommand(wpilib.command.Command):
-    def __init__(self, fnom):
-        super().__init__()
+def read_trajectories(fnom):
+    from os.path import dirname, join
+    trajectory_points = []
+    with open(join(dirname(__file__), "..", "trajectories", fnom)) as f:
+        reader = csv.reader(f)
+        for i, row in enumerate(reader):
+            if i == 0:
+                # header
+                assert row == ['dt', 'xl', 'xr', 'vl', 'vr','al', 'ar', 'heading']
+            else:
+                trajectory_points.append(tuple(float(x) for x in row))
+
+    return trajectory_points
+
+
+class _CsvTrajectoryCommand(Command):
+    def __init__(self, fnom, name=None):
+        super().__init__(name)
         self.drivetrain = self.getRobot().drivetrain
         self.requires(self.drivetrain)
         self.timer = Timer()
         self.period = self.getRobot().getPeriod()
+        self.fnom = fnom
+        self.trajectory_points = read_trajectories(self.fnom)
+        assert self.trajectory_points[0][0] == self.period
+        self.i = 0
 
+        self.target_v_l = 0
+        self.target_v_r = 0
+        self.target_a_l = 0
+        self.target_a_r = 0
+        self.target_heading = 0
+
+    def get_trajectory_point_m(self, i):
+        pt = (_, xl_m, xr_m, vl_mps, vr_mps, al_mps2, ar_mps2, heading_rad) = self.trajectory_points[i]
+        return pt
+
+    def get_trajectory_point_enc(self, i):
+        (dt_s, xl_m, xr_m, vl_mps, vr_mps, al_mps2, ar_mps2, heading_rad) = self.trajectory_points[i]
+        def m_to_enc(x):
+            return self.drivetrain.ratio * x / 0.3048
+        def mps_to_encp100ms(v):
+            return self.drivetrain.fps_to_encp100ms(v / 0.3048)
+
+        def mps2_to_encp100msps(a):
+            return self.drivetrain.fps2_to_encpsp100ms(a / 0.3048)
+
+        return (dt_s, m_to_enc(xl_m), m_to_enc(xr_m),
+                mps_to_encp100ms(vl_mps), mps_to_encp100ms(vr_mps),
+                mps2_to_encp100msps(al_mps2), mps2_to_encp100msps(ar_mps2),
+                heading_rad)
+
+    def isFinished(self):
+        return self.i >= len(self.trajectory_points)
+
+
+class CsvTrajectoryCommand(_CsvTrajectoryCommand):
+    def __init__(self, fnom):
+        super().__init__(fnom)
         self.ctrl_heading = PIDController(
             Kp=0, Ki=0, Kd=0, Kf=0,
             source=self.drivetrain.getAngle,
@@ -49,29 +99,6 @@ class CsvTrajectoryCommand(wpilib.command.Command):
         )
         self.ctrl_r.setInputRange(-self.max_velocity_encps, self.max_velocity_encps)
 
-        self.fnom = fnom
-        self.trajectory_points = []
-        self.read_trajectories()
-        assert self.trajectory_points[0][0] == self.period
-        self.i = 0
-
-        self.target_v_l = 0
-        self.target_v_r = 0
-        self.target_a_l = 0
-        self.target_a_r = 0
-        self.target_heading = 0
-
-    def read_trajectories(self):
-        from os.path import dirname, join
-        with open(join(dirname(__file__), "..", "trajectories", self.fnom)) as f:
-            reader = csv.reader(f)
-            for i, row in enumerate(reader):
-                if i == 0:
-                    # header
-                    assert row == ['dt', 'vl', 'vr','al', 'ar', 'heading']
-                else:
-                    self.trajectory_points.append(tuple(float(x) for x in row))
-
     def initialize(self):
         self.drivetrain.zeroEncoders()
         self.drivetrain.zeroNavx()
@@ -91,18 +118,8 @@ class CsvTrajectoryCommand(wpilib.command.Command):
         self.pos_ft_l = self.drivetrain.getLeftEncoder() / self.drivetrain.ratio
         self.pos_ft_r = self.drivetrain.getRightEncoder() / self.drivetrain.ratio
 
-        (_, vl_mps, vr_mps, al_mps2, ar_mps2, heading_rad) = self.trajectory_points[self.i]
-        def mps_to_encp100ms(v):
-            return self.drivetrain.fps_to_encp100ms(v / 0.3048)
-
-        def mps2_to_encp100msps(a):
-            return self.drivetrain.fps2_to_encpsp100ms(a / 0.3048)
-
-        self.target_v_l = mps_to_encp100ms(vl_mps)
-        self.target_v_r =-mps_to_encp100ms(vr_mps)
-        self.target_a_l = mps2_to_encp100msps(al_mps2)
-        self.target_a_r =-mps2_to_encp100msps(ar_mps2)
-        self.target_heading = math.degrees(heading_rad)
+        (_, _, _, self.target_v_l, self.target_v_r, self.target_a_l,
+         self.target_a_r, self.target_heading) = self.get_trajectory_point_enc(self.i)
 
         self.ctrl_l.setSetpoint(self.target_v_l)
         self.ctrl_l.setAccelerationSetpoint(self.target_a_l)
@@ -110,14 +127,8 @@ class CsvTrajectoryCommand(wpilib.command.Command):
         self.ctrl_r.setAccelerationSetpoint(self.target_a_r)
         self.ctrl_heading.setSetpoint(self.target_heading)
 
-        #self.drivetrain.setLeftMotor(self.ctrl_l.calculateFeedForward())
-        #self.drivetrain.setRightMotor(self.ctrl_r.calculateFeedForward())
-
         self.drivetrain.feed()
         self.i += 1
-
-    def isFinished(self):
-        return self.i >= len(self.trajectory_points)
 
     def end(self):
         self.ctrl_l.disable()
@@ -130,3 +141,24 @@ class CsvTrajectoryCommand(wpilib.command.Command):
 
     def correct_heading(self, correction):
         pass
+
+
+class StateSpaceDriveCommand(_CsvTrajectoryCommand, StateSpaceDriveController):
+    def __init__(self, fnom):
+        _CsvTrajectoryCommand.__init__(self, fnom)
+        StateSpaceDriveController.__init__(self, Command.getRobot().drivetrain)
+        self.u_min = -8
+        self.u_max = 8
+
+    def initialize(self):
+        self.drivetrain.zeroEncoders()
+        self.drivetrain.zeroNavx()
+        self.i = 0
+
+    def execute(self):
+        (dt_s, xl_m, xr_m, vl_mps, vr_mps, al_mps2, ar_mps2, heading_rad) = self.get_trajectory_point_m(self.i)
+        self.update(xl_m, xr_m, vl_mps, vr_mps)
+        self.i += 1
+
+    def end(self):
+        self.drivetrain.off()

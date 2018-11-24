@@ -34,7 +34,6 @@ def test_ProfiledForward2(Notifier, sim_hooks):
 
     t = 0
     pos_ft = 0
-    import pdb
 
     if log_trajectory:
         logger = DataLogger("test_profiled_forward2.csv")
@@ -44,16 +43,16 @@ def test_ProfiledForward2(Notifier, sim_hooks):
         logger.add('pos', lambda: pos_ft)
         logger.add('target_pos', lambda: command.dist_ft)
         logger.add('v', lambda: command.profiler_l.current_target_v)
-        logger.add('max_v', lambda: command.max_velocity)
+        logger.add('max_v', lambda: command.max_v_encps)
         logger.add('a', lambda: command.profiler_l.current_a)
         logger.add('max_a', lambda: command.max_acceleration)
         logger.add('voltage', lambda: command.drivetrain.getVoltage())
         logger.add('vpl', lambda: command.drivetrain.motor_lb.get())
         logger.add('adist', lambda: command.profiler_l.adist)
         logger.add('err', lambda: command.profiler_l.err)
-    pdb.set_trace()
     while t < 10:
-        logger.log()
+        if log_trajectory:
+            logger.log()
         getLeftEncoder.return_value = pos_ft * command.drivetrain.ratio
         getRightEncoder.return_value = -pos_ft * command.drivetrain.ratio
 
