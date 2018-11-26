@@ -73,14 +73,18 @@ class ProfiledForward(wpilib.command.Command):
         self.ctrl_l.enable()
         self.ctrl_r.enable()
         self.ctrl_heading.enable()
-        self.logger = self.drivetrain.logger
+        self.logger = DataLogger("profiled_forward.csv")
+        self.drivetrain.init_logger(self.logger)
         self.logger.add("profile_vel_r", lambda: self.target_v_r)
         self.logger.add("profile_vel_l", lambda: self.target_v_l)
         self.logger.add("pos_ft_l", lambda: self.pos_ft_l)
         self.logger.add("target_pos_l", lambda: self.profiler_l.target_pos)
-        self.logger.add("adist", lambda: self.profiler_l.adist)
-        self.logger.add("err", lambda: self.profiler_l.err)
-        self.drivetrain.logger_enabled = True
+        self.logger.add("adist_l", lambda: self.profiler_l.adist)
+        self.logger.add("err_l", lambda: self.profiler_l.err)
+        self.logger.add("choice_l", lambda: self.profiler_l.choice)
+        self.logger.add("adist_r", lambda: self.profiler_l.adist)
+        self.logger.add("err_r", lambda: self.profiler_l.err)
+        self.logger.add("choice_r", lambda: self.profiler_l.choice)
         self.timer.start()
         #print ('pdf init')
 
@@ -104,7 +108,7 @@ class ProfiledForward(wpilib.command.Command):
 
         #self.drivetrain.setLeftMotor(self.ctrl_l.calculateFeedForward())
         #self.drivetrain.setRightMotor(self.ctrl_r.calculateFeedForward())
-
+        self.logger.log()
         self.drivetrain.feed()
 
     def isFinished(self):
@@ -120,7 +124,6 @@ class ProfiledForward(wpilib.command.Command):
         self.ctrl_r.disable()
         self.ctrl_heading.disable()
         self.drivetrain.off()
-        self.drivetrain.logger_enabled = False
         self.logger.flush()
         #print ('pdf end')
 

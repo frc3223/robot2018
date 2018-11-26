@@ -53,9 +53,10 @@ class Drivetrain(Subsystem):
         self.timer.start()
         self.computed_velocity = 0
 
-        self.logger = None
         self.logger_enabled = False
-        self.init_logger()
+        #self.logger = None
+        self.logger = DataLogger('drivetrain.csv')
+        self.init_logger(self.logger)
 
     def drive_forward(self, motorF):
         #self.drive.arcadeDrive(-motorF, 0, squaredInputs= False)
@@ -103,31 +104,30 @@ class Drivetrain(Subsystem):
     def initDefaultCommand(self):
         self.setDefaultCommand(Drive())
 
-    def init_logger(self):
-        self.logger = DataLogger('drivetrain.csv')
-        self.logger.add("time", lambda: self.timer.get())
-        self.logger.add("heading", lambda: self.navx.getAngle())
-        self.logger.add("enc_pos_l", lambda: self.getLeftEncoder())
-        self.logger.add("enc_pos_r", lambda: self.getRightEncoder())
-        self.logger.add("enc_vel_l", lambda: self.motor_lb.getSelectedSensorVelocity(0))
-        self.logger.add("enc_vel_r", lambda: self.motor_rb.getSelectedSensorVelocity(0))
-        #self.logger.add("error_l", lambda: self.motor_lb.getClosedLoopError(0))
-        #self.logger.add("error_r", lambda: self.motor_rb.getClosedLoopError(0))
-        #self.logger.add("target_l", lambda: self.motor_lb.getClosedLoopTarget(0))
-        #self.logger.add("target_r", lambda: self.motor_rb.getClosedLoopTarget(0))
-        #self.logger.add("computed_velocity", lambda: self.computed_velocity)
-        #self.logger.add("mode", lambda: self.running_command_name())
-        self.logger.add("voltage", lambda: self.motor_lb.getBusVoltage())
-        #self.logger.add("voltagep_l", lambda: self.motor_lb.getMotorOutputPercent())
-        #self.logger.add("voltagep_r", lambda: self.motor_rb.getMotorOutputPercent())
-        #self.logger.add("current_rf", lambda: self.pdp.getCurrent(0))
-        #self.logger.add("current_rb", lambda: self.pdp.getCurrent(1))
-        #self.logger.add("current_lf", lambda: self.pdp.getCurrent(15))
-        #self.logger.add("current_lb", lambda: self.pdp.getCurrent(13))
-        #self.logger.add("enc_offset_l", lambda: self.left_offset)
-        #self.logger.add("enc_offset_r", lambda: self.right_offset)
-        self.logger.add("VPR", lambda: self.motor_rb.getMotorOutputPercent())
-        self.logger.add("VRL", lambda: self.motor_lb.getMotorOutputPercent())
+    def init_logger(self, logger):
+        logger.add("time", lambda: self.timer.get())
+        logger.add("heading", lambda: self.navx.getAngle())
+        logger.add("enc_pos_l", lambda: self.getLeftEncoder())
+        logger.add("enc_pos_r", lambda: self.getRightEncoder())
+        logger.add("enc_vel_l", lambda: self.motor_lb.getSelectedSensorVelocity(0))
+        logger.add("enc_vel_r", lambda: self.motor_rb.getSelectedSensorVelocity(0))
+        #logger.add("error_l", lambda: self.motor_lb.getClosedLoopError(0))
+        #logger.add("error_r", lambda: self.motor_rb.getClosedLoopError(0))
+        #logger.add("target_l", lambda: self.motor_lb.getClosedLoopTarget(0))
+        #logger.add("target_r", lambda: self.motor_rb.getClosedLoopTarget(0))
+        #logger.add("computed_velocity", lambda: self.computed_velocity)
+        #logger.add("mode", lambda: self.running_command_name())
+        logger.add("voltage", lambda: self.motor_lb.getBusVoltage())
+        #logger.add("voltagep_l", lambda: self.motor_lb.getMotorOutputPercent())
+        #logger.add("voltagep_r", lambda: self.motor_rb.getMotorOutputPercent())
+        #logger.add("current_rf", lambda: self.pdp.getCurrent(0))
+        #logger.add("current_rb", lambda: self.pdp.getCurrent(1))
+        #logger.add("current_lf", lambda: self.pdp.getCurrent(15))
+        #logger.add("current_lb", lambda: self.pdp.getCurrent(13))
+        #logger.add("enc_offset_l", lambda: self.left_offset)
+        #logger.add("enc_offset_r", lambda: self.right_offset)
+        logger.add("VPR", lambda: self.motor_rb.getMotorOutputPercent())
+        logger.add("VRL", lambda: self.motor_lb.getMotorOutputPercent())
 
     def running_command_name(self):
         command = self.getCurrentCommand()

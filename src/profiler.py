@@ -11,6 +11,7 @@ class TrapezoidalProfile:
         self.do_print = False
         self.adist = 0
         self.err = 0
+        self.choice = 0
 
     @property
     def cruise_v(self):
@@ -71,42 +72,54 @@ class TrapezoidalProfile:
 
         if abs(err) < okerr:
             if v > 0:
+                self.choice = 1
                 self._print ('pro1')
                 dec_to_zero()
             elif v < 0:
+                self.choice = 2
                 self._print ('pro2')
                 inc()
         elif okerr <= err < adist and v > 0:
+            self.choice = 3
             self._print ('pro3')
             dec()
         elif okerr <= err < adist and v < 0:
+            self.choice = 4
             self._print ('pro4')
             inc()
         elif -okerr >= err > -adist and v < 0:
+            self.choice = 5
             self._print ('pro5')
             inc()
             self.current_a = +a
         elif -okerr >= err > -adist and v > 0:
+            self.choice = 6
             self._print ('pro6')
             dec()
         elif err > adist and v >= 0:
             if v < self.cruise_v:
+                self.choice = 7
                 self._print ('pro7')
                 inc()
             elif v > self.cruise_v:
+                self.choice = 8
                 self._print ('pro8')
                 dec()
         elif err < -adist and v <= 0:
             if v > -self.cruise_v:
+                self.choice = 9
                 self._print ('pro9')
                 dec()
             elif v < -self.cruise_v:
+                self.choice = 10
                 self._print ('pro10')
                 inc()
         elif err > adist and v < 0:
+            self.choice = 11
             self._print ('pro11')
             inc()
         elif err < -adist and v > 0:
+            self.choice = 12
             self._print ('pro12')
             dec()
 

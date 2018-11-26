@@ -5,6 +5,7 @@ from wpilib import Timer
 from wpilib.command import Command
 
 from commands.statespace import StateSpaceDriveController
+from data_logger import DataLogger
 from pidcontroller import PIDController
 from drivecontroller import DriveController
 
@@ -105,11 +106,12 @@ class CsvTrajectoryCommand(_CsvTrajectoryCommand):
         self.ctrl_l.enable()
         self.ctrl_r.enable()
         self.ctrl_heading.enable()
-        self.logger = self.drivetrain.logger
+        self.logger = DataLogger("csv_trajectory1.csv")
+        self.drivetrain.init_logger(self.logger)
         self.logger.add("profile_vel_r", lambda: self.target_v_r)
         self.logger.add("profile_vel_l", lambda: self.target_v_l)
         self.logger.add("pos_ft_l", lambda: self.pos_ft_l)
-        self.drivetrain.logger_enabled = True
+        self.logger.add("i", lambda: self.i)
         self.timer.start()
         self.i = 0
         #print ('pdf init')
@@ -128,6 +130,7 @@ class CsvTrajectoryCommand(_CsvTrajectoryCommand):
         self.ctrl_heading.setSetpoint(self.target_heading)
 
         self.drivetrain.feed()
+        self.logger.log()
         self.i += 1
 
     def end(self):
@@ -135,7 +138,6 @@ class CsvTrajectoryCommand(_CsvTrajectoryCommand):
         self.ctrl_r.disable()
         self.ctrl_heading.disable()
         self.drivetrain.off()
-        self.drivetrain.logger_enabled = False
         self.logger.flush()
         #print ('pdf end')
 
@@ -154,11 +156,15 @@ class StateSpaceDriveCommand(_CsvTrajectoryCommand, StateSpaceDriveController):
         self.drivetrain.zeroEncoders()
         self.drivetrain.zeroNavx()
         self.i = 0
+        self.logger = DataLogger("ss_trajectory.csv")
+        self.drivetrain.init_logger(self.logger)
 
     def execute(self):
         (dt_s, xl_m, xr_m, vl_mps, vr_mps, al_mps2, ar_mps2, heading_rad) = self.get_trajectory_point_m(self.i)
         self.update(xl_m, xr_m, vl_mps, vr_mps)
+        self.logger.log()
         self.i += 1
 
     def end(self):
         self.drivetrain.off()
+        self.logger.flush()
