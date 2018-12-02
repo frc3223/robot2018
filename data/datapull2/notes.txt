@@ -1,0 +1,7 @@
+from elevator-1528844785.csv, I get
+
+5.5 V -> 4500 enc/sec
+
+from elevator-0.2-2018-6-12.csv, I get
+
+2.36 V -> 450 enc/sec

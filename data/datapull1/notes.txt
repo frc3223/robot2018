@@ -1,0 +1,25 @@
+from elevator4.py, I get velocity at 100% voltage to be around
+11080 encoder ticks per second, which translates to
+17 rad/sec
+need to read motor resistances again, grr
+one of them was drawing between 11 and 12 amps, another between 13 and 14.
+current seemed to increase slightly as elevator went up
+all with 10.5 volts. I think battery was a bit low, base was 12.3
+
+say 12 amps per motor. what is the torque per motor?
+Kt = 
+
+
+what dreck is the above?
+from elevator2.csv, I get 
+
+10.3 V -> 13500 enc/sec
+
+from elevator4.csv, I get
+7.1 V -> 9900 enc/sec
+
+for these, I hope the elevator is going up, but I think they aren't.
+
+from elevator3.csv, I get
+
+10.6 V -> 11700 enc/sec
