@@ -23,3 +23,8 @@ for these, I hope the elevator is going up, but I think they aren't.
 from elevator3.csv, I get
 
 10.6 V -> 11700 enc/sec
+
+
+also, from elevator2.csv, I get
+
+1.22 V -> 0 enc/sec
