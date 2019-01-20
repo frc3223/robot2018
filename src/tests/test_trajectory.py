@@ -8,21 +8,42 @@ from robot import Rockslide
 log_trajectory = True
 
 
-def test_CsvTrajectoryCommand(Notifier):
+def test_CsvTrajectoryCommand(Notifier, sim_hooks):
     robot = Rockslide()
     robot.robotInit()
     command = CsvTrajectoryCommand("traj1.tra")
     command.initialize()
+    assert len(command.trajectory_points) != 0
     i = 0
     t = 0
     while not command.isFinished():
         command.execute()
         i += 1
         t += robot.getPeriod()
+        sim_hooks.time = t
 
         assert t < 10
 
     command.end()
+    command.logger.close()
+
+
+def test_CsvTrajectoryCommand(Notifier):
+    robot = Rockslide()
+    robot.robotInit()
+    command = CsvTrajectoryCommand("traj1.tra")
+    command.initialize()
+    command.trajectory_points = [(0,0,0,4,-4, 2, -2,0)]
+
+    command.execute()
+
+    v = 4 * robot.drivetrain.ratio / 0.3048 / 10
+    a = 2 * robot.drivetrain.ratio / 0.3048 / 10
+    assert command.target_v_l == v
+    assert command.target_v_r == -v
+    assert command.target_a_l == a
+    assert command.target_a_r == -a
+
 
 class DriveSide:
     def __init__(self, Ks, Kv, Ka, invert=False):
@@ -114,7 +135,7 @@ def test_StateSpaceDriveCommand(Notifier):
         logger.add('target_vel_r_mps', lambda: command.r[3,0])
         logger.add('voltage', lambda: command.drivetrain.getVoltage())
         logger.add('vpl', lambda: command.drivetrain.motor_lb.get())
-        logger.add('vpr', lambda: command.drivetrain.motor_lb.get())
+        logger.add('vpr', lambda: command.drivetrain.motor_rb.get())
 
     while not command.isFinished():
         logger.log()

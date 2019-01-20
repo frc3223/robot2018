@@ -3,7 +3,7 @@ import networktables
 import wpilib
 
 from wpilib.command.subsystem import Subsystem
-from commands.elevator_test import ElevatorTest
+from commands.elevator_test import ElevatorTest, ElevatorTest2
 from data_logger import DataLogger
 
 
@@ -19,11 +19,9 @@ class Elevator(Subsystem):
         self.sensor = wpilib.DigitalInput(9) # temp num, true is on
         self.motor = ctre.WPI_TalonSRX(3)
         self.other_motor = ctre.WPI_TalonSRX(2)
-        self.other_motor.follow(self.motor)
 
         self.right_motor = ctre.WPI_TalonSRX(14)
         self.other_right_motor = ctre.WPI_TalonSRX(15)
-        self.other_right_motor.follow(self.right_motor)
         self.zeroed = False
         self.motor.configSelectedFeedbackSensor(ctre.FeedbackDevice.QuadEncoder, 0, 0)
         self.motor.configOpenLoopRamp(0.1, 0)
@@ -55,7 +53,9 @@ class Elevator(Subsystem):
         self.motor.configNominalOutputForward(0, 0)
         self.motor.configNominalOutputReverse(0, 0)
         self.motor.configPeakOutputForward(1.0, 0)
-        self.motor.configPeakOutputReverse(-0.8, 0)
+        self.motor.configPeakOutputReverse(-1.0, 0)
+        self.other_motor.configPeakOutputForward(1.0, 0)
+        self.other_motor.configPeakOutputReverse(-1.0, 0)
         self.motor.selectProfileSlot(0, 0)
         self.motor.config_kF(0, 0, 0)
         self.motor.config_kP(0, 0.018, 0)
@@ -81,36 +81,53 @@ class Elevator(Subsystem):
 
     def hover(self):
         self.motor.set(-0.1)
+        self.other_motor.set(-0.1)
         self.right_motor.set(0.1)
+        self.other_right_motor.set(0.1)
         self.fan.setSpeed(1.0)
         self.fan2.setSpeed(1.0)
 
     def descend(self, voltage):
-        pass
+        self.motor.set(voltage)
+        self.other_motor.set(voltage)
+        self.right_motor.set(-voltage)
+        self.other_right_motor.set(-voltage)
 
     def ascend(self, voltage):
-        self.motor.set(voltage)
-        self.right_motor.set(-voltage)
+        self.motor.set(-voltage)
+        self.other_motor.set(-voltage)
+        self.right_motor.set(voltage)
+        self.other_right_motor.set(voltage)
 
     def test_drive_x(self, x):
         self.motor.set(x)
+        self.other_motor.set(x)
         self.right_motor.set(-x)
+        self.other_right_motor.set(-x)
 
     def test_drive_positive_light(self):
         self.motor.set(0.6)
+        self.other_motor.set(0.6)
         self.right_motor.set(-0.6)
+        self.other_right_motor.set(-0.6)
 
     def test_drive_positive(self):
         self.motor.set(-1.0)
+        self.other_motor.set(-1.0)
         self.right_motor.set(1.0)
+        self.other_right_motor.set(1.0)
 
     def test_drive_negative(self):
         self.motor.set(0.6)
+        self.other_motor.set(0.6)
         self.right_motor.set(-0.6)
+        self.other_right_motor.set(-0.6)
 
     def test_drive_negative_light(self):
         self.motor.set(-0.4)
+        self.other_motor.set(-0.4)
         self.right_motor.set(0.4)
+        self.other_right_motor.set(0.4)
 
     def off(self):
         self.motor.stopMotor()

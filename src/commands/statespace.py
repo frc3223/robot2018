@@ -18,6 +18,7 @@ class StateSpaceController:
         self.u_min = -12
         self.u_max = 12
         self.u = numpy.zeros((self.B.shape[1], 1))
+        self.u_offset = numpy.zeros(shape=self.u.shape)
         self.y = numpy.zeros((self.C.shape[0], 1))
         self.r = numpy.zeros((self.A.shape[0], 1))
         self.x_hat = numpy.zeros((self.A.shape[0], 1))
@@ -38,7 +39,7 @@ class StateSpaceController:
             self.r = next_r
         else:
             uff = self.Kff @ (self.r - self.A @ self.r)
-        self.u = numpy.clip(self.u + uff, self.u_min, self.u_max)
+        self.u = numpy.clip(self.u + uff - self.u_offset, self.u_min, self.u_max)
 
     def predict(self):
         self.x_hat = self.A @ self.x_hat + self.B @ self.u
@@ -60,17 +61,18 @@ class StateSpaceDriveController(StateSpaceController):
         :param drivetrain:
         """
         from numpy import array as matrix
-        derpymodel = False
+        derpymodel = True
         if derpymodel:
-            A = matrix([[1., 0.01694108, 0., 0.00250869],
-                        [0., 0.72295618, 0., 0.22253044],
-                        [0., 0.00250869, 1., 0.01694108],
-                        [0., 0.22253044, 0., 0.72295618]])
+            self.u_offset = matrix([[1.29], [1.32]])
+            A = matrix([[1., 0.01954524, 0., 0.],
+                        [0., 0.95487116, 0., 0.],
+                        [0., 0., 1., 0.01953105],
+                        [0., 0., 0., 0.95347481]])
 
-            B = matrix([[0.00108648, -0.00083504],
-                        [0.09866299, -0.07375227],
-                        [-0.00083504, 0.00108648],
-                        [-0.07375227, 0.09866299]])
+            B = matrix([[0.00016013, 0.],
+                        [0.01589044, 0.],
+                        [0., 0.00016005],
+                        [0., 0.01587891]])
 
             C = matrix([[1, 0, 0, 0],
                         [0, 0, 1, 0]])
@@ -78,21 +80,23 @@ class StateSpaceDriveController(StateSpaceController):
             D = matrix([[0., 0.],
                         [0., 0.]])
 
-            K = matrix([[60.90638737, 7.93224841, 21.38859796, 5.13312445],
-                        [21.38859796, 5.13312445, 60.90638737, 7.93224841]])
+            K = matrix([[8.70337746e+01, 1.54364232e+01, 1.64506224e-13,
+                         6.89196592e-15],
+                        [-2.48568085e-14, 5.01719083e-15, 8.70882843e+01,
+                         1.53690171e+01]])
 
-            Kff = matrix([[706.64972496, 1.70156933, 289.74584796, 0.76636392],
-                          [289.74584796, 0.76636392, 706.64972496, 1.70156933]])
+            Kff = matrix([[778.96386513, 1.93253647, 0., 0.],
+                          [0., 0., 778.71561076, 1.93145314]])
 
-            L = matrix([[1.16232192, 0.11368756],
-                        [7.55194606, 5.86548273],
-                        [0.11368756, 1.16232192],
-                        [5.86548273, 7.55194606]])
+            L = matrix([[1.28456071e+00, 4.48179733e-17],
+                        [1.39021836e+01, 2.18957546e-15],
+                        [-3.61345038e-17, 1.28327788e+00],
+                        [-1.76400902e-15, 1.38293101e+01]])
 
-            Ainv = matrix([[1., -0.0247057, 0., 0.00413452],
-                           [0., 1.52797747, 0., -0.47032104],
-                           [0., 0.00413452, 1., -0.0247057],
-                           [0., -0.47032104, 0., 1.52797747]])
+            Ainv = matrix([[1., -0.02046898, 0., 0.],
+                           [0., 1.04726171, 0., 0.],
+                           [0., 0., 1., -0.02048408],
+                           [0., 0., 0., 1.04879541]])
         else:
             A = matrix([[1., 0.01631643, 0., 0.00238268],
                         [0., 0.66737266, 0., 0.20542149],
@@ -157,13 +161,14 @@ class StateSpaceDriveController(StateSpaceController):
     def _send_input(self):
         voltage = self.drivetrain.getVoltage()
         vpl = self.u[0,0] / voltage
-        vpr =-self.u[1,0] / voltage
+        vpr = self.u[1,0] / voltage
         self.drivetrain.setLeftMotor(vpl)
         self.drivetrain.setRightMotor(vpr)
+        self.drivetrain.feed()
 
     def update_measurements(self):
         pos_l_ft = self.drivetrain.getLeftEncoder() / self.drivetrain.ratio
-        pos_r_ft =-self.drivetrain.getRightEncoder() / self.drivetrain.ratio
+        pos_r_ft = self.drivetrain.getRightEncoder() / self.drivetrain.ratio
         self.y[0,0] = pos_l_ft / 3.28 # meter
         self.y[1,0] = pos_r_ft / 3.28 # meter
 

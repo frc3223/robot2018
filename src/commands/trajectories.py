@@ -34,7 +34,7 @@ class _CsvTrajectoryCommand(Command):
         self.period = self.getRobot().getPeriod()
         self.fnom = fnom
         self.trajectory_points = read_trajectories(self.fnom)
-        assert self.trajectory_points[0][0] == self.period
+        #assert self.trajectory_points[0][0] == self.period
         self.i = 0
 
         self.target_v_l = 0
@@ -44,8 +44,8 @@ class _CsvTrajectoryCommand(Command):
         self.target_heading = 0
 
     def get_trajectory_point_m(self, i):
-        pt = (_, xl_m, xr_m, vl_mps, vr_mps, al_mps2, ar_mps2, heading_rad) = self.trajectory_points[i]
-        return pt
+        (_, xl_m, xr_m, vl_mps, vr_mps, al_mps2, ar_mps2, heading_rad) = self.trajectory_points[i]
+        return (_, xl_m, -xr_m, vl_mps, -vr_mps, al_mps2, -ar_mps2, heading_rad)
 
     def get_trajectory_point_enc(self, i):
         (dt_s, xl_m, xr_m, vl_mps, vr_mps, al_mps2, ar_mps2, heading_rad) = self.trajectory_points[i]
