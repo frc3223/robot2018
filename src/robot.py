@@ -11,6 +11,7 @@ from wpilib.buttons.joystickbutton import JoystickButton
 
 from commands.elevator_test import ElevatorTest2
 from commands.trajectories import CsvTrajectoryCommand, StateSpaceDriveCommand
+from commands.turnlikeistuesday import Turnlikeistuesday
 from oi import getJoystick
 from oi import getJoystick1
 from subsystems import (Drivetrain, Elevator, Intake)
@@ -45,7 +46,8 @@ class Rockslide(CommandBasedRobot):
         #self.auto =  driveForward.DriveForward(16)
         #self.auto = AutoEncoders(20)
         #self.auto = ProfiledForward(10)
-        self.auto = StateSpaceDriveCommand("straight3m.tra")
+        #self.auto = StateSpaceDriveCommand("straight3m.tra")
+        self.auto = Turnlikeistuesday(1)
         #self.auto = autonomous.Autonomuscc()
         #self.auto = AutoEncoders()
         self.elevatorSwitch = ElevatorSwitch()

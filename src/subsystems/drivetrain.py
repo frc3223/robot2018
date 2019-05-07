@@ -2,7 +2,7 @@ import wpilib
 import wpilib.drive
 import csv
 from wpilib.command.subsystem import Subsystem
-from robotpy_ext.common_drivers import navx
+import navx
 import ctre
 from commands.drive import Drive
 import networktables
@@ -126,6 +126,8 @@ class Drivetrain(Subsystem):
         #logger.add("current_lb", lambda: self.pdp.getCurrent(13))
         #logger.add("enc_offset_l", lambda: self.left_offset)
         #logger.add("enc_offset_r", lambda: self.right_offset)
+        logger.add("VR", lambda: self.motor_rb.getMotorOutputVoltage())
+        logger.add("VL", lambda: self.motor_lb.getMotorOutputVoltage())
         logger.add("VPR", lambda: self.motor_rb.getMotorOutputPercent())
         logger.add("VRL", lambda: self.motor_lb.getMotorOutputPercent())
 

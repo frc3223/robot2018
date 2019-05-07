@@ -1,4 +1,4 @@
-from robotpy_ext.common_drivers import navx
+import navx
 import wpilib
 
 class TurnLeft(wpilib.command.Command):

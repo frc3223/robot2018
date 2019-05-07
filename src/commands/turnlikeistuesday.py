@@ -13,14 +13,15 @@ class Turnlikeistuesday(wpilib.command.Command):
 
     def initialize(self):
         self.drivetrain.zeroNavx()
-        self.drivetrain.initialize_driveTurnlike()
+        self.drivetrain.zeroEncoders()
+        self.drivetrain.logger_enabled = True
 
     def execute(self):
-        self.drivetrain.execute_turn(self.position)
+        self.drivetrain.turn_left(1.0)
         
     def isFinished(self):
-        return abs(self.drivetrain.navx.getAngle() - self.position) < 7
+        return False
 
     def end(self):
-        self.drivetrain.uninitialize_driveTurnlike()
+        self.drivetrain.logger_enabled = False
         self.drivetrain.off()
