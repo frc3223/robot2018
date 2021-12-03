@@ -21,7 +21,7 @@ class Drive(wpilib.command.Command):
         if abs(fw2) > 0.2 or abs(lr2) > 0.2:
              self.drivetrain.drive.arcadeDrive(fw2 * .3, lr2 * .5, squareInputs=False)
         elif abs(fw) > 0.2 or abs(lr) > 0.2:
-            self.drivetrain.drive.arcadeDrive(fw, lr, squareInputs=False)
+            self.drivetrain.drive.arcadeDrive(fw * .5, lr * .7, squareInputs=False)
         else:
             self.drivetrain.drive.arcadeDrive(0, 0)
 
