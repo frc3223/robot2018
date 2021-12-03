@@ -1,10 +1,10 @@
 cryptography==3.1.1
-pyfrc
-pynetworktables
+pyfrc==2019.1.0
+pynetworktables==2019.0.2
 pytest
 robotpy-hal-base
 robotpy-hal-sim
-robotpy-installer
-robotpy-wpilib-utilities
-wpilib
-robotpy-ctre
+robotpy-installer==2019.2.0
+robotpy-wpilib-utilities==2019.0.9
+wpilib==2019.2.3
+robotpy-ctre==2019.3.2
