@@ -1,1 +1,1 @@
-python robot.py deploy --no-version-check --skip-tests
+py -3 robot.py deploy --no-version-check --skip-tests
