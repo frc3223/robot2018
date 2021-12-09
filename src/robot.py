@@ -13,6 +13,7 @@ from commands.elevator_test import ElevatorTest2
 from commands.trajectories import CsvTrajectoryCommand, StateSpaceDriveCommand
 from commands.turnlikeistuesday import Turnlikeistuesday
 from oi import getJoystick
+from oi import getJoystick1
 from subsystems import (Drivetrain, Elevator, Intake)
 from wpilib.command import Command
 from commands import (
@@ -41,6 +42,7 @@ class Rockslide(CommandBasedRobot):
         self.intake = Intake()
         self.table = networktables.NetworkTables.getTable("String")
         self.joystick = getJoystick()
+        self.joystick1 = getJoystick1()
         #self.auto =  driveForward.DriveForward(16)
         #self.auto = AutoEncoders(20)
         #self.auto = ProfiledForward(10)
@@ -58,8 +60,8 @@ class Rockslide(CommandBasedRobot):
     def teleopInit(self):
         self.drivetrain.zeroEncoders()
         self.drivetrain.zeroNavx()
-        buttonA = JoystickButton(self.joystick, 1)
-        buttonY = JoystickButton(self.joystick, 4)
+        buttonA = JoystickButton(self.joystick1, 1)
+        buttonY = JoystickButton(self.joystick1, 4)
 
         #buttonA.whenPressed(ElevatorTest2())
         buttonA.whenPressed(self.elevatorIntake)
